@@ -43,6 +43,7 @@
         state: present
         key: "https://github.com/{{ item }}.keys"
       loop: "{{ github_pubkeys }}"
+      when: not ansible_check_mode
 
     - name: Add SSH public keys to {{ backup_user }} user
       ansible.posix.authorized_key:
@@ -50,6 +51,7 @@
         state: present
         key: "https://github.com/{{ item }}.keys"
       loop: "{{ github_pubkeys }}"
+      when: not ansible_check_mode
 
     # Enable sudo privileges without password
     - name: Allow users of {{ bootstrap_user }} group to sudo without a password
@@ -84,7 +86,7 @@
         state: present
       notify:
         - restart sshd
-
+    
   handlers:
     - name: restart sshd
       ansible.builtin.service:

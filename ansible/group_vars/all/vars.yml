@@ -8,6 +8,7 @@ github_pubkeys:
   - Bee0933
 
 # default packages
+upgrade_all_packages: false
 docker_users: "{{bootstrap_user}}"
 docker_daily_prune: true
 

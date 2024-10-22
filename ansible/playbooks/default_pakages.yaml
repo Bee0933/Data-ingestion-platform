@@ -1,7 +1,7 @@
 ---
 - name: Install default and required packages
   hosts: all
-  gather_facts: false
+  gather_facts: true
   become: true
   
   tasks:
