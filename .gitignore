@@ -1,0 +1,28 @@
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Crash log files
+crash.log
+
+# Terraform variable override files
+*.tfvars
+
+# .terraform directory (stores provider plugins)
+.terraform/
+
+# Lock files
+.terraform.lock.hcl
+
+
+# Ignore inventory files (if you don't want them in version control)
+inventory
+
+# Ignore Ansible roles directory (if using external roles)
+roles/
+/collections
+
+# Ignore SSH keys and sensitive files
+*.key
+*.pem
+
