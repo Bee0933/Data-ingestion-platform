@@ -7,7 +7,7 @@ on:
     branches: ["main"] 
 jobs:
   build:
-    name: Ansible Lint # Naming the build is important to use it as a status check
+    name: Ansible Lint 
     runs-on: ubuntu-latest
 
     steps:
@@ -18,4 +18,4 @@ jobs:
           args: ""
           setup_python: "true"
           working_directory: "ansible/"
-          requirements_file: "ansible/requirements.yml"
+          requirements_file: "requirements.yml"
