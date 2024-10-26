@@ -18,3 +18,6 @@ bootstrap-server: check-host-var
 	ansible-playbook ./playbooks/initial_bootstrap.yaml -l '$(HOSTS)' &&\
 			ansible-playbook ./playbooks/default_pakages.yaml -l '$(HOSTS)'
 
+start-src-server: check-host-var
+	ansible-playbook ./playbooks/start_src_server.yaml -l '$(HOSTS)'
+

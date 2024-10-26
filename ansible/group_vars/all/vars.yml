@@ -3,12 +3,16 @@ ansible_user: dataops
 initial_user: root
 bootstrap_user: dataops
 backup_user: dataops_backup
-
 github_pubkeys:
   - Bee0933
 
-# default packages
 upgrade_all_packages: false
 docker_users: "{{bootstrap_user}}"
 docker_daily_prune: true
 
+####### src-server ########
+sftp_user: dataops
+sftp_password: dataops
+sftp_dir: /home/{{ ansible_user }}/sftp_data/
+sftp_docker_image: emberstack/sftp
+sftp_port: 2222

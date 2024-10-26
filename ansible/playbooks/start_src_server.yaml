@@ -1,0 +1,31 @@
+---
+- name: start src server sftp and postgres DWH
+  hosts: src-server-0
+  gather_facts: true
+  become: true
+  
+  tasks:
+    - name: create sftp_data dir
+      file:
+        path: "{{sftp_dir}}"
+        state: directory
+
+    - name: Template sftp config file
+      template:
+        src: ./templates/sftp.json.j2
+        dest: "{{ sftp_dir }}/sftp.json"
+    
+    - name: Run SFTP container
+      docker_container:
+        name: sftp
+        image: "{{ sftp_docker_image }}"
+        ports:
+          - "{{ sftp_port }}:22"
+        volumes:
+          - "{{ sftp_dir }}/sftp.json:/app/config/sftp.json:ro"
+          - "{{ sftp_dir }}:/home/sftp"
+        state: started
+        restart_policy: always
+
+
+
