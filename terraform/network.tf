@@ -12,6 +12,7 @@ resource "digitalocean_firewall" "src-server-fw" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+
   inbound_rule {
     protocol         = "tcp"
     port_range       = "80"
@@ -21,6 +22,12 @@ resource "digitalocean_firewall" "src-server-fw" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "2222"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 

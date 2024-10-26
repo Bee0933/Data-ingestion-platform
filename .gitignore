@@ -26,3 +26,4 @@ roles/
 *.key
 *.pem
 
+test
