@@ -23,7 +23,7 @@ resource "digitalocean_droplet" "airbyte-server-0" {
   size   = "s-4vcpu-8gb"
 
   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
-  tags = ["airflow:${var.project-tag}"]
+  tags     = ["airbyte:${var.project-tag}"]
 }
 
 # # Storage Server droplet in the Frankfut region
