@@ -169,7 +169,7 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
-  
+
 }
 
 # # # Storage Server firewall configs
