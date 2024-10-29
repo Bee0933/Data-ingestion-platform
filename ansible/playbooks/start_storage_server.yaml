@@ -11,6 +11,11 @@
         state: directory
         mode: '0755'
         recurse: yes
+
+    - name: Template mc docker-compose file
+      template:
+        src: ./templates/docker-compose.yaml.j2
+        dest: "{{ minio_base_dir }}/docker-compose.yaml"
     
     - name: Run MinIO container
       community.docker.docker_container:
@@ -33,16 +38,8 @@
         port: "{{ minio_console_port }}"
         timeout: 100
     
-    # WIP
-    - name: Create mc-init container
-      community.docker.docker_container:
-        name: mc-init
-        image: "{{ minio_mc_docker_image }}:{{ minio_mc_docker_image_tag }}"
-        entrypoint: >
-          /bin/bash -c "
-          sleep 5;
-          /usr/bin/mc config host add {{ minio_mc_client }} http://{{ ansible_host }}:{{ minio_console_port }} {{ minio_root_usr }} {{ minio_root_password }};
-          /usr/bin/mc mb {{ minio_mc_client }}/{{ minio_bucket_name }};
-          /usr/bin/mc admin service restart {{ minio_mc_client }};
-          "
-        state: present
+    - name: Run Docker Compose up
+      ansible.builtin.command:
+        cmd: docker-compose up -d
+        chdir: "{{ minio_base_dir }}"
+      become: true

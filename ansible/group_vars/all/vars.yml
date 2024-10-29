@@ -52,6 +52,7 @@ airbyte_sftp_file_pattern: "log-([0-9]{4})([0-9]{2})([0-9]{2})"
 minio_docker_image: quay.io/minio/minio
 minio_docker_image_tag: latest
 minio_container_name: minio
+minio_base_dir: ./minio
 minio_data_dir: minio/data
 minio_console_port: 9000
 minio_api_port: 9001

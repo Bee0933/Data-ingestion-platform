@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  mc-init:
+    image: "{{ minio_mc_docker_image }}:{{ minio_mc_docker_image_tag }}"
+    container_name: mc-init
+    entrypoint: >
+      /bin/bash -c "
+      sleep 5;
+      /usr/bin/mc config --quiet host add {{ minio_mc_client }} http://{{ ansible_host }}:{{ minio_console_port }} {{ minio_root_usr }} {{ minio_root_password }};
+      /usr/bin/mc mb --quiet {{ minio_mc_client }}/{{ minio_bucket_name }};
+      /usr/bin/mc admin service restart {{ minio_mc_client }};
+      "
