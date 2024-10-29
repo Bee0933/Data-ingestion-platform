@@ -7,7 +7,7 @@
   tasks:
     - name: Create MinIO data directory
       ansible.builtin.file:
-        path: "{{ ansible_env.HOME }}/{{ minio_data_dir }}"
+        path: "./{{ minio_data_dir }}"
         state: directory
         mode: '0755'
         recurse: yes
@@ -22,8 +22,27 @@
           - "{{ minio_console_port }}:{{ minio_console_port }}"
           - "{{ minio_api_port }}:{{ minio_api_port }}"
         volumes:
-          - "{{ ansible_env.HOME }}/{{ minio_data_dir }}:/data"
+          - "./{{ minio_data_dir }}:/data"
         env:
           MINIO_ROOT_USER: "dataops"
           MINIO_ROOT_PASSWORD: "dataops123"
         command: server /data --console-address ":{{ minio_api_port }}"
+    
+    - name: Wait for MinIO to start
+      wait_for:
+        port: "{{ minio_console_port }}"
+        timeout: 100
+    
+    # WIP
+    - name: Create mc-init container
+      community.docker.docker_container:
+        name: mc-init
+        image: "{{ minio_mc_docker_image }}:{{ minio_mc_docker_image_tag }}"
+        entrypoint: >
+          /bin/bash -c "
+          sleep 5;
+          /usr/bin/mc config host add {{ minio_mc_client }} http://{{ ansible_host }}:{{ minio_console_port }} {{ minio_root_usr }} {{ minio_root_password }};
+          /usr/bin/mc mb {{ minio_mc_client }}/{{ minio_bucket_name }};
+          /usr/bin/mc admin service restart {{ minio_mc_client }};
+          "
+        state: present
