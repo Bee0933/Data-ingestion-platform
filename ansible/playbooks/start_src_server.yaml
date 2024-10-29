@@ -27,5 +27,70 @@
         state: started
         restart_policy: always
 
+    ###### Postgres server ##############
+    - name: Create required directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ postgres_data_dir }}"
+        - "{{ postgres_config_dir }}"
+        - "{{ postgres_log_dir }}"
+    
+    # postgres main configs
+    - name: Template postgresql.config file
+      template:
+        src: ./templates/postgresql.conf.j2
+        dest: "{{ postgres_config_dir }}/postgresql.conf"
+
+    # postgres security configs
+    - name: Template pg_hba.conf file
+      template:
+        src: ./templates/pg_hba.conf.j2
+        dest: "{{ postgres_config_dir }}/pg_hba.conf"
+
+    - name: Run PostgreSQL in Docker
+      docker_container:
+        name: "{{ postgres_container_name }}"
+        image: "{{ postgres_docker_image }}:{{ postgres_docker_image_tag }}"
+        state: started
+        restart_policy: unless-stopped
+        env:
+          POSTGRES_USER: "{{ postgres_user }}"
+          POSTGRES_PASSWORD: "{{ postgres_password }}"
+          POSTGRES_DB: "{{ postgres_database }}"
+          PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+          - "{{ postgres_data_dir }}:/var/lib/postgresql/data"
+          - "{{ postgres_config_dir }}/postgresql.conf:/etc/postgresql/postgresql.conf"
+          - "{{ postgres_config_dir }}/pg_hba.conf:/etc/postgresql/pg_hba.conf"
+          - "{{ postgres_log_dir }}:/var/log/postgresql"
+        published_ports:
+          - "{{ postgres_port }}:{{ postgres_port }}"
+        command: -c config_file=/etc/postgresql/postgresql.conf
+    
+    # - name: Create a new PostgreSQL user
+    #   command: >
+    #     docker exec {{ postgres_container_name }} psql -U {{ postgres_user }} -d postgres -c "
+    #       CREATE USER {{ postgres_dwh_user }} WITH PASSWORD '{{ postgres_dwh_user_password }}';
+    #     "
+
+    # - name: Create a new PostgreSQL database
+    #   command: >
+    #     docker exec {{ postgres_container_name }} psql -U {{ postgres_user }} -d postgres -c "
+    #       CREATE DATABASE {{ postgres_dwh_database }} OWNER {{ postgres_dwh_user }};
+    #     "
+
+    # - name: Grant privileges on the database
+    #   command: >
+    #     docker exec {{ postgres_container_name }} psql -U {{ postgres_user }} -d postgres -c "
+    #       GRANT ALL PRIVILEGES ON DATABASE {{ postgres_dwh_database }} TO {{ postgres_dwh_user }};
+    #     "
+
+    - name: Restart PostgreSQL container
+      docker_container:
+        name: "{{ postgres_container_name }}"
+        state: started
 
 

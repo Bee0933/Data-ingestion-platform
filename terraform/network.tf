@@ -32,6 +32,12 @@ resource "digitalocean_firewall" "src-server-fw" {
   }
 
   inbound_rule {
+    protocol         = "tcp"
+    port_range       = "5432"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
     protocol         = "icmp"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
@@ -61,6 +67,12 @@ resource "digitalocean_firewall" "src-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "443"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "5432"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
@@ -108,6 +120,13 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  # PG port
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "5432"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   outbound_rule {
     protocol              = "tcp"
     port_range            = "53"
@@ -142,6 +161,15 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     port_range            = "2222"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
+
+  # PG port 
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "5432"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  
 }
 
 # # # Storage Server firewall configs

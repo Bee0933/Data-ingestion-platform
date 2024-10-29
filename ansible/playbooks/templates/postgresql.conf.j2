@@ -1,0 +1,8 @@
+# Memory settings
+shared_buffers = {{ pg_shared_buffers }}     # About 25% of total memory
+work_mem = {{ pg_work_mem }}
+maintenance_work_mem = {{ pg_maintenance_work_mem }}
+
+# Connections settings
+listen_addresses = '*'
+max_connections = {{ pg_max_connections }}   # Adjust based on app requirements

@@ -16,6 +16,27 @@ sftp_password: dataops
 sftp_dir: /home/{{ ansible_user }}/sftp_data/
 sftp_docker_image: emberstack/sftp
 sftp_port: 2222
+# postgres DWH
+postgres_docker_image: postgres
+postgres_docker_image_tag: 16
+postgres_container_name: postgres_dwh
+postgres_database: postgres
+postgres_password: root
+postgres_user: root
+postgres_port: 5432
+postgres_dwh_user: dataops
+postgres_dwh_user_password: dataops
+postgres_dwh_database: dataops_db
+postgres_data_dir: /opt/postgres/data
+postgres_config_dir: /opt/postgres/config
+postgres_log_dir: /var/log/postgresql
+# pg configs
+pg_addr: 0.0.0.0/0
+pg_shared_buffers: 1GB
+pg_work_mem: 16MB
+pg_maintenance_work_mem: 512MB
+pg_max_connections: 100
+
 
 
 ###### Airbtye-server ######

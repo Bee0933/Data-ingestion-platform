@@ -22,6 +22,7 @@
           - gnupg
           - build-essential
           - python3
+          - python3-pip
           - apache2-utils
           - jq
           - lz4
