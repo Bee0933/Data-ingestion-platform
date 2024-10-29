@@ -5,15 +5,15 @@ resource "digitalocean_ssh_key" "default" {
 }
 
 # Source Server droplet in the Frankfut region
-# resource "digitalocean_droplet" "src-server-0" {
-#   image  = "ubuntu-24-04-x64"
-#   name   = "src-server-0"
-#   region = "fra1"
-#   size   = "s-2vcpu-4gb"
+resource "digitalocean_droplet" "src-server-0" {
+  image  = "ubuntu-24-04-x64"
+  name   = "src-server-0"
+  region = "fra1"
+  size   = "s-2vcpu-4gb"
 
-#   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
-#   tags     = ["source:${var.project-tag}"]
-# }
+  ssh_keys = [digitalocean_ssh_key.default.fingerprint]
+  tags     = ["source:${var.project-tag}"]
+}
 
 # # Airbyte Server droplet in the Frankfut region
 resource "digitalocean_droplet" "airbyte-server-0" {

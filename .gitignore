@@ -20,7 +20,7 @@ inventory
 
 # Ignore Ansible roles directory (if using external roles)
 roles/
-/collections
+collections/
 
 # Ignore SSH keys and sensitive files
 *.key

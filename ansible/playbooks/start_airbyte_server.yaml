@@ -1,0 +1,121 @@
+---
+- name: start Airbyte server
+  hosts: airbyte-server-0
+  gather_facts: true
+  become: true
+  
+  tasks:
+    - name: Install Airbyte CLI
+      ansible.builtin.shell:
+        cmd: "curl -LsfS https://get.airbyte.com | bash -"
+      args:
+        executable: /bin/bash
+
+    - name: Run Airbyte with low-resource mode
+      ansible.builtin.shell:
+        cmd: "abctl local install --port {{ airbyte_port }} --low-resource-mode --insecure-cookies"
+      args:
+        executable: /bin/bash
+
+    - name: Set up Airbyte credentials - email
+      ansible.builtin.shell:
+        cmd: "abctl local credentials --email {{ airbyte_email }}"
+      args:
+        executable: /bin/bash
+
+    - name: Set up Airbyte credentials - password
+      ansible.builtin.shell:
+        cmd: "abctl local credentials --password {{ airtbyte_pasword }}"
+      args:
+        executable: /bin/bash
+
+    - name: Run abctl local credentials command
+      shell: abctl local credentials
+      register: abctl_output  
+    
+    - name: Print raw command output
+      debug:
+        msg: "{{ abctl_output.stdout }}"
+
+    - name: Extract Client-Id
+      set_fact:
+        client_id: "{{ (abctl_output.stdout | regex_search('Client-Id:\\s+([a-zA-Z0-9-]+)', '\\1') | first).strip() }}"
+
+    - name: Extract Client-Secret
+      set_fact:
+        client_secret: "{{ (abctl_output.stdout | regex_search('Client-Secret:\\s+([a-zA-Z0-9]+)', '\\1') | first).strip() }}"
+
+    - name: Print Client ID
+      debug:
+        msg: "Client ID: {{ client_id }}"
+
+    - name: Print Client Secret
+      debug:
+        msg: "Client Secret: {{ client_secret }}"
+    
+    - name: Request access token
+      uri:
+        url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/v1/applications/token'
+        method: POST
+        headers:
+          Content-Type: 'application/json'
+        body: |
+          {
+            "client_id": "{{ client_id }}",
+            "client_secret": "{{ client_secret }}"
+          }
+        body_format: json
+        return_content: yes
+      register: token_response
+
+    - name: Show access token
+      debug:
+        msg: "Access Token: {{ token_response.json.access_token }}"
+
+    - name: Request workspace details
+      uri:
+        url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/workspaces'
+        method: GET
+        headers:
+          accept: 'application/json'
+          authorization: 'Bearer {{ token_response.json.access_token }}'
+        return_content: yes
+      register: workspace_response
+
+    - name: Show workspace ID
+      debug:
+        msg: "Workspace ID: {{ workspace_response.json.data[0].workspaceId }}"
+
+    - name: Create source
+      uri:
+        url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/sources'
+        method: POST
+        headers:
+          accept: 'application/json'
+          authorization: 'Bearer {{ token_response.json.access_token }}'
+          content-type: 'application/json'
+        body: |
+          {
+            "configuration": {
+              "sourceType": "sftp",
+              "user": "{{ sftp_user }}",
+              "host": "{{ sftp_host }}",
+              "port": {{ sftp_port }},
+              "credentials": {
+                "auth_method": "SSH_PASSWORD_AUTH",
+                "auth_user_password": "{{ sftp_password }}"
+              },
+              "file_types": "{{ airbyte_sftp_filetype }}",
+              "folder_path": "{{ airbyte_sftp_src_dir }}",
+              "file_pattern": "{{ airbyte_sftp_file_pattern }}"
+            },
+            "name": "src-server",
+            "workspaceId": "{{ workspace_response.json.data[0].workspaceId }}"
+          }
+        body_format: json
+        return_content: yes
+      register: source_response
+
+    - name: Show source ID
+      debug:
+        msg: "Source ID: {{ source_response.json.sourceId }}"

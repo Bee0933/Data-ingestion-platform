@@ -21,4 +21,7 @@ bootstrap-server: check-host-var
 start-src-server: check-host-var
 	ansible-playbook ./playbooks/start_src_server.yaml -l '$(HOSTS)'
 
+start-airbyte-server: check-host-var
+	ansible-playbook ./playbooks/start_airbyte_server.yaml -l '$(HOSTS)'
+
 # all: bootstrap-server start-src-server 

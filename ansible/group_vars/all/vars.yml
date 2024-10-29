@@ -16,3 +16,13 @@ sftp_password: dataops
 sftp_dir: /home/{{ ansible_user }}/sftp_data/
 sftp_docker_image: emberstack/sftp
 sftp_port: 2222
+
+
+###### Airbtye-server ######
+airbyte_email: user@dataops.com
+airtbyte_pasword: dataops
+airbyte_iac_path: /templates/
+airbyte_sftp_src_dir: /sftp
+airbyte_port: 8000
+airbyte_sftp_filetype: csv
+airbyte_sftp_file_pattern: "log-([0-9]{4})([0-9]{2})([0-9]{2})"
