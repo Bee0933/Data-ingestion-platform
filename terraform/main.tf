@@ -27,15 +27,15 @@ resource "digitalocean_droplet" "airbyte-server-0" {
 }
 
 # # Storage Server droplet in the Frankfut region
-# resource "digitalocean_droplet" "storage-server-0" {
-#   image  = "ubuntu-24-04-x64"
-#   name   = "storage-server-0"
-#   region = "fra1"
-#   size   = "s-2vcpu-4gb"
+resource "digitalocean_droplet" "storage-server-0" {
+  image  = "ubuntu-24-04-x64"
+  name   = "storage-server-0"
+  region = "fra1"
+  size   = "s-2vcpu-4gb"
 
-#   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
-#   tags = ["storage:${var.project-tag}"]
-# }
+  ssh_keys = [digitalocean_ssh_key.default.fingerprint]
+  tags     = ["storage:${var.project-tag}"]
+}
 
 # # DuckDB Server droplet in the Frankfut region
 # resource "digitalocean_droplet" "duckdb-server-0" {
@@ -46,4 +46,15 @@ resource "digitalocean_droplet" "airbyte-server-0" {
 
 #   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
 #   tags = ["duckdb:${var.project-tag}"]
+# }
+
+# # Monitoring Server droplet in the Frankfut region
+# resource "digitalocean_droplet" "monitor-server-0" {
+#   image  = "ubuntu-24-04-x64"
+#   name   = "monitor-server-0"
+#   region = "fra1"
+#   size   = "s-2vcpu-4gb"
+
+#   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
+#   tags     = ["monitor:${var.project-tag}"]
 # }

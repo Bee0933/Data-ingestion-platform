@@ -1,0 +1,29 @@
+---
+- name: start storsge server
+  hosts: storage-server-0
+  gather_facts: true
+  become: true
+  
+  tasks:
+    - name: Create MinIO data directory
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/{{ minio_data_dir }}"
+        state: directory
+        mode: '0755'
+        recurse: yes
+    
+    - name: Run MinIO container
+      community.docker.docker_container:
+        name: "{{ minio_container_name }}"
+        image: "{{ minio_docker_image }}"
+        state: started
+        restart_policy: unless-stopped
+        published_ports:
+          - "{{ minio_console_port }}:{{ minio_console_port }}"
+          - "{{ minio_api_port }}:{{ minio_api_port }}"
+        volumes:
+          - "{{ ansible_env.HOME }}/{{ minio_data_dir }}:/data"
+        env:
+          MINIO_ROOT_USER: "dataops"
+          MINIO_ROOT_PASSWORD: "dataops123"
+        command: server /data --console-address ":{{ minio_api_port }}"

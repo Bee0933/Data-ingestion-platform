@@ -173,10 +173,94 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
 }
 
 # # # Storage Server firewall configs
-# resource "digitalocean_firewall" "storage-server-fw" {
-#   name = "storage-server-firewall"
+resource "digitalocean_firewall" "storage-server-fw" {
+  name = "storage-server-firewall"
 
-#   droplet_ids = [digitalocean_droplet.storage-server-0.id]
+  droplet_ids = [digitalocean_droplet.storage-server-0.id]
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "22"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "80"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # MINIO API
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9000"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # MINO console 
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9001"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "icmp"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "53"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "udp"
+    port_range            = "53"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "icmp"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "80"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "443"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9000"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9001"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+}
+
+# # DuckDB Server firewall configs
+# resource "digitalocean_firewall" "duckdb-server-fw" {
+#   name = "duckdb-server-firewall"
+
+#   droplet_ids = [digitalocean_droplet.duckdb-server-0.id]
 
 #   inbound_rule {
 #     protocol         = "tcp"
@@ -230,11 +314,12 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
 #   }
 # }
 
-# # DuckDB Server firewall configs
-# resource "digitalocean_firewall" "duckdb-server-fw" {
-#   name = "duckdb-server-firewall"
 
-#   droplet_ids = [digitalocean_droplet.duckdb-server-0.id]
+# # Monitoring Server firewall configs
+# resource "digitalocean_firewall" "monitor-server-fw" {
+#   name = "monitor-server-firewall"
+
+#   droplet_ids = [digitalocean_droplet.monitor-server-0.id]
 
 #   inbound_rule {
 #     protocol         = "tcp"
