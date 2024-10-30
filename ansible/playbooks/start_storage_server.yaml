@@ -31,7 +31,9 @@
         env:
           MINIO_ROOT_USER: "dataops"
           MINIO_ROOT_PASSWORD: "dataops123"
-        command: server /data --console-address ":{{ minio_api_port }}"
+          MINIO_SERVER_ACCESS_KEY: "{{ minio_access_key }}"
+          MINIO_SERVER_SECRET_KEY: "{{ minio_secret_key }}"
+        command: server /data --console-address ":{{ minio_console_port }}"
     
     - name: Wait for MinIO to start
       wait_for:

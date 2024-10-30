@@ -127,6 +127,19 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  # minio ports
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9001"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9000"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   outbound_rule {
     protocol              = "tcp"
     port_range            = "53"
@@ -166,6 +179,18 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "5432"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9000"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9001"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 

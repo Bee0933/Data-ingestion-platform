@@ -99,7 +99,7 @@
             "configuration": {
               "sourceType": "sftp",
               "user": "{{ sftp_user }}",
-              "host": "{{ sftp_host }}",
+              "host": "{{ hostvars['src-server-0'].ansible_host }}",
               "port": {{ sftp_port }},
               "credentials": {
                 "auth_method": "SSH_PASSWORD_AUTH",
@@ -119,3 +119,40 @@
     - name: Show source ID
       debug:
         msg: "Source ID: {{ source_response.json.sourceId }}"
+
+    - name: Create destination
+      uri:
+        url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/destinations'
+        method: POST
+        headers:
+          accept: 'application/json'
+          authorization: 'Bearer {{ token_response.json.access_token }}'
+          content-type: 'application/json'
+        body: |
+          {
+            "configuration": {
+              "destinationType": "s3",
+              "access_key_id": "{{ minio_root_usr }}",
+              "secret_access_key": "{{ minio_root_password }}",
+              "s3_bucket_name": "{{ minio_bucket_name }}",
+              "s3_bucket_path": "{{ minio_bucket_path }}",
+              "s3_bucket_region": "{{ minio_bucket_region }}",
+              "format": {
+                "format_type": "CSV",
+                "compression": {
+                  "compression_type": "No Compression"
+                },
+                "flattening": "No flattening"
+              },
+              "s3_endpoint": "http://{{ hostvars['storage-server-0'].ansible_host }}:{{ minio_api_port }}"
+            },
+            "name": "storage-server",
+            "workspaceId": "{{ workspace_response.json.data[0].workspaceId }}"
+          }
+        body_format: json
+        return_content: yes
+      register: destination_response
+
+    - name: Show destination ID
+      debug:
+        msg: "Destination ID: {{ destination_response.json.destinationId }}"

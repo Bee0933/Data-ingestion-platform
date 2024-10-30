@@ -54,11 +54,15 @@ minio_docker_image_tag: latest
 minio_container_name: minio
 minio_base_dir: ./minio
 minio_data_dir: minio/data
-minio_console_port: 9000
-minio_api_port: 9001
+minio_console_port: 9001
+minio_api_port: 9000
 minio_root_usr: dataops
 minio_root_password: dataops123
 minio_mc_docker_image: minio/mc
 minio_mc_docker_image_tag: latest
 minio_mc_client: dmlminio
 minio_bucket_name: rawdata
+minio_bucket_path: /
+minio_bucket_region: us-east-1
+minio_access_key: DIvD8A2C80BNsSxWh3P6
+minio_secret_key: cXN7OpAz7ssFVkgcZ713tkc0Ixke9cTYNjyzGfEA
