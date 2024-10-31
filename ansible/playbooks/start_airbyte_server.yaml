@@ -113,6 +113,7 @@
             "workspaceId": "{{ workspace_response.json.data[0].workspaceId }}"
           }
         body_format: json
+        timeout: 120
         return_content: yes
       register: sftp_server_source_response
 
@@ -150,9 +151,48 @@
             "workspaceId": "{{ workspace_response.json.data[0].workspaceId }}"
           }
         body_format: json
+        timeout: 120
         return_content: yes
       register: storage_server_destination_response
 
     - name: Show destination ID
       debug:
         msg: "Destination ID: {{ storage_server_destination_response.json.destinationId }}"
+    
+    - name: Create connection
+      uri:
+        url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/connections'
+        method: POST
+        headers:
+          accept: 'application/json'
+          authorization: 'Bearer {{ token_response.json.access_token }}'
+          content-type: 'application/json'
+        body: |
+          {
+            "name": "src-server -> storage-server",
+            "sourceId": "{{ sftp_server_source_response.json.sourceId }}",
+            "destinationId": "{{ storage_server_destination_response.json.destinationId }}",
+            "configurations": {
+              "streams": [
+                {
+                  "syncMode": "{{ airbyte_sync_mode }}",
+                  "name": "{{ airbyte_src_stream_name }}",
+                  "cursorField": [
+                    "{{ airbyte_sftp_file_pattern }}"
+                  ]
+                }
+              ]
+            },
+            "schedule": {
+              "scheduleType": "cron",
+              "cronExpression": "{{ airbyte_sync_cron }}"
+            }
+          }
+        body_format: json
+        timeout: 120
+        return_content: yes
+      register: src_storage_connection_response
+
+    - name: Show connection ID
+      debug:
+        msg: "Connection ID: {{ src_storage_connection_response.json.connectionId }}"

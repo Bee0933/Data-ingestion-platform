@@ -29,6 +29,7 @@
           - aria2
           - zstd
           - iftop
+          - unzip
         state: latest
         update_cache: true
 

@@ -45,7 +45,10 @@ airbyte_iac_path: /templates/
 airbyte_sftp_src_dir: /sftp
 airbyte_port: 8000
 airbyte_sftp_filetype: csv
-airbyte_sftp_file_pattern: "log-([0-9]{4})([0-9]{2})([0-9]{2})"
+airbyte_sftp_file_pattern: "sample_*"
+airbyte_sync_mode: full_refresh_append
+airbyte_src_stream_name: sample_01.csv
+airbyte_sync_cron: 0 0 * * * ?
 
 
 ###### Storage Server #######
@@ -64,3 +67,6 @@ minio_mc_client: dmlminio
 minio_bucket_name: rawdata
 minio_bucket_path: /
 minio_bucket_region: us-east-1
+
+
+######## Query Layer #########
