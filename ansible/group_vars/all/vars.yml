@@ -14,8 +14,15 @@ docker_daily_prune: true
 sftp_user: dataops
 sftp_password: dataops
 sftp_dir: /home/{{ ansible_user }}/sftp_data/
+sftp_remote_dir: /home/sftp
+sftp_template_data: "{{ sftp_dir }}/template"
 sftp_docker_image: emberstack/sftp
 sftp_port: 2222
+files_to_upload:                       # List of files to upload
+  - "for-hire.csv"
+  - "green-taxi.csv"
+  - "yellow-taxi.csv"
+
 # postgres DWH
 postgres_docker_image: postgres
 postgres_docker_image_tag: 13

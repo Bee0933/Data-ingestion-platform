@@ -10,10 +10,21 @@
         path: "{{sftp_dir}}"
         state: directory
 
+    - name: create sftp_template_data dir
+      file:
+        path: "{{ sftp_template_data }}"
+        state: directory
+
     - name: Template sftp config file
       template:
         src: ./templates/sftp.json.j2
         dest: "{{ sftp_dir }}/sftp.json"
+
+    - name: Copy template files to the remote machine
+      copy:
+        src: "templates/init-data/{{ item }}"
+        dest: "{{ sftp_template_data }}/{{ item }}"
+      loop: "{{ files_to_upload }}"
     
     - name: Run SFTP container
       docker_container:
@@ -23,9 +34,32 @@
           - "{{ sftp_port }}:22"
         volumes:
           - "{{ sftp_dir }}/sftp.json:/app/config/sftp.json:ro"
-          - "{{ sftp_dir }}:/home/sftp"
+          - "{{ sftp_dir }}:{{ sftp_remote_dir }}"
         state: started
         restart_policy: always
+    
+    - name: Wait for SFTP server to be ready
+      wait_for:
+        port: "{{ sftp_port }}"
+        delay: 10
+        timeout: 60
+    
+    - name: Fetch and add SFTP server key to known hosts
+      shell: |
+        ssh-keyscan -p {{ sftp_port }} {{ ansible_host }} | sed "s/^/[$ansible_host]:$sftp_port /" >> ~/.ssh/known_hosts
+      args:
+        creates: ~/.ssh/known_hosts
+
+    - name: Upload files via SFTP with sshpass
+      command: >
+        sshpass -p "{{ sftp_password }}" sftp -oPort={{ sftp_port }} {{ sftp_user }}@{{ ansible_host }}
+      args:
+        stdin: |
+          {% for file in files_to_upload %}
+          put {{ file }}
+          {% endfor %}
+      register: sftp_output
+      ignore_errors: false
 
     ###### Postgres server ##############
     - name: Create required directories

@@ -5,4 +5,6 @@
 - Init SFTP Drop off zone with sample data
 
 # DuckDB
-- setup duckdb image with fastapi query functions
+- setup duckdb image with fastapi query functions ✅
+- containerize and push to hub via ci 
+
