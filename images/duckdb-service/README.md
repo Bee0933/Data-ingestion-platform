@@ -8,7 +8,7 @@ This custom service acts as a tool for querying platform data from the MinIO S3 
 docker buildx build -t <name>:<tag> .
 ```
 
-### Running the Forest snapshot service
+### Running the duckdb-query-service
 
 ```bash
 docker run bestnyah/duckdb-query-service:latest
