@@ -26,4 +26,5 @@ collections/
 *.key
 *.pem
 
+venv/
 test
