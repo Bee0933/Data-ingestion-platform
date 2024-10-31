@@ -45,7 +45,7 @@ resource "digitalocean_droplet" "duckdb-server-0" {
   size   = "s-1vcpu-1gb"
 
   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
-  tags = ["duckdb:${var.project-tag}"]
+  tags     = ["duckdb:${var.project-tag}"]
 }
 
 # # Monitoring Server droplet in the Frankfut region
