@@ -86,7 +86,7 @@
       debug:
         msg: "Workspace ID: {{ workspace_response.json.data[0].workspaceId }}"
 
-    - name: Create source
+    - name: Create source (sftp-server)
       uri:
         url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/sources'
         method: POST
@@ -114,11 +114,11 @@
           }
         body_format: json
         return_content: yes
-      register: source_response
+      register: sftp_server_source_response
 
     - name: Show source ID
       debug:
-        msg: "Source ID: {{ source_response.json.sourceId }}"
+        msg: "Source ID: {{ sftp_server_source_response.json.sourceId }}"
 
     - name: Create destination
       uri:
@@ -151,8 +151,8 @@
           }
         body_format: json
         return_content: yes
-      register: destination_response
+      register: storage_server_destination_response
 
     - name: Show destination ID
       debug:
-        msg: "Destination ID: {{ destination_response.json.destinationId }}"
+        msg: "Destination ID: {{ storage_server_destination_response.json.destinationId }}"

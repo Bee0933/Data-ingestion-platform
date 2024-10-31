@@ -29,10 +29,8 @@
         volumes:
           - "./{{ minio_data_dir }}:/data"
         env:
-          MINIO_ROOT_USER: "dataops"
-          MINIO_ROOT_PASSWORD: "dataops123"
-          MINIO_SERVER_ACCESS_KEY: "{{ minio_access_key }}"
-          MINIO_SERVER_SECRET_KEY: "{{ minio_secret_key }}"
+          MINIO_ROOT_USER: "{{ minio_root_usr }}"
+          MINIO_ROOT_PASSWORD: "{{ minio_root_password }}"
         command: server /data --console-address ":{{ minio_console_port }}"
     
     - name: Wait for MinIO to start

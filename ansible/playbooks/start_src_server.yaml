@@ -49,6 +49,10 @@
       template:
         src: ./templates/pg_hba.conf.j2
         dest: "{{ postgres_config_dir }}/pg_hba.conf"
+    
+    - name: Debug PostgreSQL password variable
+      debug:
+        var: postgres_password
 
     - name: Run PostgreSQL in Docker
       docker_container:
@@ -57,8 +61,8 @@
         state: started
         restart_policy: unless-stopped
         env:
-          POSTGRES_USER: "{{ postgres_user }}"
           POSTGRES_PASSWORD: "{{ postgres_password }}"
+          POSTGRES_USER: "{{ postgres_user }}"
           POSTGRES_DB: "{{ postgres_database }}"
           PGDATA: /var/lib/postgresql/data/pgdata
         volumes:
@@ -88,9 +92,7 @@
     #       GRANT ALL PRIVILEGES ON DATABASE {{ postgres_dwh_database }} TO {{ postgres_dwh_user }};
     #     "
 
-    - name: Restart PostgreSQL container
-      docker_container:
-        name: "{{ postgres_container_name }}"
-        state: started
+    - name: Restart PostgreSQL Docker container
+      command: docker restart {{ postgres_container_name }}
 
 

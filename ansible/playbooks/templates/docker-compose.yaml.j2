@@ -7,7 +7,7 @@ services:
     entrypoint: >
       /bin/bash -c "
       sleep 5;
-      /usr/bin/mc config --quiet host add {{ minio_mc_client }} http://{{ ansible_host }}:{{ minio_console_port }} {{ minio_root_usr }} {{ minio_root_password }};
+      /usr/bin/mc config --quiet host add {{ minio_mc_client }} http://{{ ansible_host }}:{{ minio_api_port }} {{ minio_root_usr }} {{ minio_root_password }};
       /usr/bin/mc mb --quiet --ignore-existing --region={{ minio_bucket_region }} {{ minio_mc_client }}/{{ minio_bucket_name }};
       /usr/bin/mc admin service restart {{ minio_mc_client }};
       "
