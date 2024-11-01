@@ -1,0 +1,60 @@
+name: Snapshot Service Image
+
+# Cancel workflow if there is a new change to the branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'images/duckdb-service/**'
+  # pull_request:
+  #   branches: [main]
+  #   paths:
+  #     - 'images/duckdb-service/**'
+
+jobs:
+  build-and-push-docker-image:
+    name: Build images and push to DockerHub
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: List cached docker images
+        run: docker image ls
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3  
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: bestnyah/duckdb-query-service
+          tags: |
+            type=raw,value={{date 'YYYY-MM-DD'}}-{{sha}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build image and push to GitHub Container Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: ./images/duckdb-service
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: List docker images
+        run: docker image ls

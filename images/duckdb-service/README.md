@@ -25,7 +25,7 @@ docker run bestnyah/duckdb-query-service:latest
     DUCKDB_SERVER_PORT=
 
 
-### sample
+### sample docker run
 ```bash
 docker run -d \
     -e MINIO_ACCESS_KEY=minioadmin \
