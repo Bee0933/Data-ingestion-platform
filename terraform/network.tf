@@ -312,6 +312,13 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  # minio API port
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9000"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   inbound_rule {
     protocol         = "icmp"
     source_addresses = ["0.0.0.0/0", "::/0"]
@@ -349,6 +356,13 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "8007"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+  
+  # Minio API port
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9000"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }

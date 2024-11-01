@@ -27,6 +27,8 @@ start-airbyte-server: check-host-var
 start-storage-server: check-host-var
 	ansible-playbook ./playbooks/start_storage_server.yaml -l '$(HOSTS)'
 
+start-query-server: check-host-var
+	ansible-playbook ./playbooks/start_query_server.yaml -l '$(HOSTS)'
 
 # Help command
 help:
@@ -39,6 +41,7 @@ help:
 	@echo "  make start-src-server HOSTS=<target_hosts>      [Start the source server]"
 	@echo "  make start-airbyte-server HOSTS=<target_hosts>  [Start the Airbyte server]"
 	@echo "  make start-storage-server HOSTS=<target_hosts>  [Start the storage server]"
+	@echo "  make start-query-server HOSTS=<target_hosts>    [Start the query server]"
 	@echo
 	@echo "Usage example:"
 	@echo "  make bootstrap-server HOSTS=src-server-0"

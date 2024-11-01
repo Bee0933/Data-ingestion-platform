@@ -1,0 +1,21 @@
+---
+- name: start query server
+  hosts: duckdb-server-0
+  gather_facts: true
+  become: true
+  
+  tasks:
+    - name: Run DuckDB Query Service
+      community.docker.docker_container:
+        name: "{{ duckdb_svc_container_name }}"  
+        image: "{{ duckdb_svc_image }}:{{ duckdb_svc_image_tag }}"
+        state: started
+        restart_policy: always  
+        env:
+          MINIO_ACCESS_KEY: "{{ minio_root_usr }}"
+          MINIO_SECRET_KEY: "{{ minio_root_password }}"
+          MINIO_ENDPOINT_URL: "http://{{ hostvars['storage-server-0'].ansible_host }}:{{ minio_api_port }}"
+          MINIO_BUCKET_NAME: "{{ minio_bucket_name }}"
+          DUCKDB_SERVER_PORT: "{{ duckdb_svc_container_port }}"  
+        published_ports:
+          - "{{ duckdb_svc_container_port }}:{{ duckdb_svc_container_port }}"
