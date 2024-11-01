@@ -358,7 +358,7 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
     port_range            = "8007"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
-  
+
   # Minio API port
   outbound_rule {
     protocol              = "tcp"
