@@ -43,23 +43,47 @@
         port: "{{ sftp_port }}"
         delay: 10
         timeout: 60
-    
-    - name: Fetch and add SFTP server key to known hosts
-      shell: |
-        ssh-keyscan -p {{ sftp_port }} {{ ansible_host }} | sed "s/^/[$ansible_host]:$sftp_port /" >> ~/.ssh/known_hosts
-      args:
-        creates: ~/.ssh/known_hosts
 
+    - name: Remove entry from known_hosts
+      command: ssh-keygen -f '/root/.ssh/known_hosts' -R '[{{ ansible_host }}]:{{ sftp_port }}'
+      register: ssh_keygen_result
+      ignore_errors: true
+    
     - name: Upload files via SFTP with sshpass
       command: >
-        sshpass -p "{{ sftp_password }}" sftp -oPort={{ sftp_port }} {{ sftp_user }}@{{ ansible_host }}
+        sshpass -p "{{ sftp_password }}" sftp -v -o StrictHostKeyChecking=no -oPort={{ sftp_port }} {{ sftp_user }}@{{ ansible_host }}
       args:
         stdin: |
           {% for file in files_to_upload %}
-          put {{ file }}
+          put {{ sftp_template_data }}/{{ file }} /sftp/{{ file }}
           {% endfor %}
       register: sftp_output
       ignore_errors: false
+
+    - name: Display SFTP upload output
+      debug:
+        var: sftp_output.stdout_lines
+
+    - name: Display SFTP error output
+      debug:
+        var: sftp_output.stderr
+    
+    # - name: Fetch and add SFTP server key to known hosts
+    #   shell: |
+    #     ssh-keyscan -p {{ sftp_port }} {{ ansible_host }} | sed "s/^/[$ansible_host]:$sftp_port /" >> ~/.ssh/known_hosts
+    #   args:
+    #     creates: ~/.ssh/known_hosts
+
+    # - name: Upload files via SFTP with sshpass
+    #   command: >
+    #     sshpass -p "{{ sftp_password }}" sftp -oPort={{ sftp_port }} {{ sftp_user }}@{{ ansible_host }}
+    #   args:
+    #     stdin: |
+    #       {% for file in files_to_upload %}
+    #       put {{ file }}
+    #       {% endfor %}
+    #   register: sftp_output
+    #   ignore_errors: false
 
     ###### Postgres server ##############
     - name: Create required directories

@@ -30,6 +30,7 @@
           - zstd
           - iftop
           - unzip
+          - sshpass
         state: latest
         update_cache: true
 

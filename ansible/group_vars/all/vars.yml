@@ -13,7 +13,7 @@ docker_daily_prune: true
 ####### src-server ########
 sftp_user: dataops
 sftp_password: dataops
-sftp_dir: /home/{{ ansible_user }}/sftp_data/
+sftp_dir: /home/{{ ansible_user }}/sftp_data
 sftp_remote_dir: /home/sftp
 sftp_template_data: "{{ sftp_dir }}/template"
 sftp_docker_image: emberstack/sftp
