@@ -25,3 +25,13 @@ docker run bestnyah/duckdb-query-service:latest
     DUCKDB_SERVER_PORT=
 
 
+### sample
+```bash
+docker run -d \
+    -e MINIO_ACCESS_KEY=minioadmin \
+    -e MINIO_SECRET_KEY=minioadmin \
+    -e MINIO_ENDPOINT_URL=http://host:9000 \
+    -e MINIO_BUCKET_NAME=bucket \
+    -e DUCKDB_SERVER_PORT=5432 \
+    -p 5432:5432 \
+    bestnyah/duckdb-query-service:latest

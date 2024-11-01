@@ -116,6 +116,7 @@
         timeout: 120
         return_content: yes
       register: sftp_server_source_response
+      
 
     - name: Show source ID
       debug:
@@ -176,7 +177,21 @@
               "streams": [
                 {
                   "syncMode": "{{ airbyte_sync_mode }}",
-                  "name": "{{ airbyte_src_stream_name }}",
+                  "name": "{{ airbyte_src_stream_name_1 }}",
+                  "cursorField": [
+                    "{{ airbyte_sftp_file_pattern }}"
+                  ]
+                },
+                {
+                  "syncMode": "{{ airbyte_sync_mode }}",
+                  "name": "{{ airbyte_src_stream_name_2 }}",
+                  "cursorField": [
+                    "{{ airbyte_sftp_file_pattern }}"
+                  ]
+                },
+                {
+                  "syncMode": "{{ airbyte_sync_mode }}",
+                  "name": "{{ airbyte_src_stream_name_3 }}",
                   "cursorField": [
                     "{{ airbyte_sftp_file_pattern }}"
                   ]

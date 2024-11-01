@@ -59,32 +59,13 @@
           {% endfor %}
       register: sftp_output
       ignore_errors: false
+      run_once: true
 
     - name: Display SFTP upload output
       debug:
         var: sftp_output.stdout_lines
-
-    - name: Display SFTP error output
-      debug:
-        var: sftp_output.stderr
     
-    # - name: Fetch and add SFTP server key to known hosts
-    #   shell: |
-    #     ssh-keyscan -p {{ sftp_port }} {{ ansible_host }} | sed "s/^/[$ansible_host]:$sftp_port /" >> ~/.ssh/known_hosts
-    #   args:
-    #     creates: ~/.ssh/known_hosts
-
-    # - name: Upload files via SFTP with sshpass
-    #   command: >
-    #     sshpass -p "{{ sftp_password }}" sftp -oPort={{ sftp_port }} {{ sftp_user }}@{{ ansible_host }}
-    #   args:
-    #     stdin: |
-    #       {% for file in files_to_upload %}
-    #       put {{ file }}
-    #       {% endfor %}
-    #   register: sftp_output
-    #   ignore_errors: false
-
+    
     ###### Postgres server ##############
     - name: Create required directories
       file:

@@ -36,10 +36,11 @@
     - name: Wait for MinIO to start
       wait_for:
         port: "{{ minio_console_port }}"
-        timeout: 100
+        timeout: 200
     
     - name: Run Docker Compose up
       ansible.builtin.command:
         cmd: docker-compose up -d
         chdir: "{{ minio_base_dir }}"
       become: true
+      

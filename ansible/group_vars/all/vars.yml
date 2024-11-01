@@ -52,9 +52,11 @@ airbyte_iac_path: /templates/
 airbyte_sftp_src_dir: /sftp
 airbyte_port: 8000
 airbyte_sftp_filetype: csv
-airbyte_sftp_file_pattern: "sample_*"
+airbyte_sftp_file_pattern: ".*\\.csv"
 airbyte_sync_mode: full_refresh_append
-airbyte_src_stream_name: sample_01.csv
+airbyte_src_stream_name_1: yellow-taxi.csv
+airbyte_src_stream_name_2: green-taxi.csv
+airbyte_src_stream_name_3: for-hire.csv
 airbyte_sync_cron: 0 0 * * * ?
 
 

@@ -305,6 +305,13 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  # duckdb query API port
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "8007"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   inbound_rule {
     protocol         = "icmp"
     source_addresses = ["0.0.0.0/0", "::/0"]
@@ -335,6 +342,13 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "443"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # duckdb query API port
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "8007"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
