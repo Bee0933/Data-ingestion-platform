@@ -14,7 +14,7 @@
         env:
           MINIO_ACCESS_KEY: "{{ minio_root_usr }}"
           MINIO_SECRET_KEY: "{{ minio_root_password }}"
-          MINIO_ENDPOINT_URL: "http://{{ hostvars['storage-server-0'].ansible_host }}:{{ minio_api_port }}"
+          MINIO_ENDPOINT_URL: "http://{{ hostvars['storage-server-0'].ansible_host }}:{{ nginx_minio_api_public_port }}"
           MINIO_BUCKET_NAME: "{{ minio_bucket_name }}"
           DUCKDB_SERVER_PORT: "{{ duckdb_svc_container_port }}"  
         published_ports:

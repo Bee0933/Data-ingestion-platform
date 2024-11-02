@@ -47,3 +47,6 @@
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
+    
+    - name: Reload nginx
+      ansible.builtin.command: docker restart {{ nginx_container_name }}
