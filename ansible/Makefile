@@ -30,6 +30,9 @@ start-storage-server: check-host-var
 start-query-server: check-host-var
 	ansible-playbook ./playbooks/start_query_server.yaml -l '$(HOSTS)'
 
+start-reverse-proxy: check-host-var
+	ansible-playbook ./playbooks/start_reverse_proxy.yaml -l '$(HOSTS)'
+
 # Help command
 help:
 	@echo "This Makefile provides commands to set up and manage the data platform servers using Ansible playbooks."
@@ -42,6 +45,7 @@ help:
 	@echo "  make start-airbyte-server HOSTS=<target_hosts>  [Start the Airbyte server]"
 	@echo "  make start-storage-server HOSTS=<target_hosts>  [Start the storage server]"
 	@echo "  make start-query-server HOSTS=<target_hosts>    [Start the query server]"
+	@echo "  make start-reverse-proxy HOSTS=<target_hosts>    [Start the nginx reverse proxy]"
 	@echo
 	@echo "Usage example:"
 	@echo "  make bootstrap-server HOSTS=src-server-0"

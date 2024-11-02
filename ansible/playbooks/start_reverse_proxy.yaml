@@ -1,0 +1,49 @@
+---
+- name: start nginx reverse proxy on platform
+  hosts: all
+  gather_facts: true
+  become: true
+  
+  tasks:
+    - name: Create data dir
+      ansible.builtin.file:
+        path: "{{ nginx_dir }}"
+        state: directory
+
+    - name: Copy .conf file
+      ansible.builtin.template:
+        src: "templates/{{ nginx_conf_file }}"
+        dest: "{{ nginx_dir }}/nginx.conf"
+      # notify:
+      #   - Reload nginx
+
+    - name: Validate NGINX htpasswd file
+      ansible.builtin.command: htpasswd -b -v {{nginx_dir}}/.htpasswd {{ nginx_auth_user }} {{ nginx_auth_password }}
+      ignore_errors: true
+      changed_when: false
+      register: validate_password_out
+    
+    - name: Create NGINX htpasswd file
+      ansible.builtin.command: htpasswd -b -c {{nginx_dir}}/.htpasswd {{ nginx_auth_user }} {{ nginx_auth_password }}
+      when: 
+        - validate_password_out.rc is defined
+        - validate_password_out.rc != 0
+
+    - name: Start NGINX
+      community.docker.docker_container:
+        name: "{{ nginx_container_name }}"
+        state: started
+        image: nginx:alpine
+        pull: true
+
+        volumes:
+          - "{{ nginx_dir }}:/etc/nginx"
+
+        restart_policy: unless-stopped
+        network_mode: host
+        log_driver: json-file
+        log_options:
+          max-file: "10"
+          max-size: 30m
+          mode: non-blocking
+          max-buffer-size: 4m

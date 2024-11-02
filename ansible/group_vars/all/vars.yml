@@ -83,3 +83,48 @@ duckdb_svc_container_name: duckdb-query-service
 duckdb_svc_image: bestnyah/duckdb-query-service
 duckdb_svc_image_tag: latest
 duckdb_svc_container_port: "8007"
+
+
+####### Monitor ########
+node_exporter_container_name: node_exporter
+node_exporter_container_image: prom/node-exporter:v1.5.0 #TODO update to v1.7.0
+node_exporter_container_env: {}
+node_exporter_container_ports:
+  - 9100:9100
+node_exporter_container_volumes:
+  - /proc:/host/proc:ro
+  - /sys:/host/sys:ro
+  - /:/rootfs:ro
+node_exporter_container_stop_timeout: "30"
+node_exporter_container_networks:
+  - name: host
+node_exporter_container_command:
+  - --path.procfs=/host/proc
+  - --path.rootfs=/rootfs
+  - --path.sysfs=/host/sys
+  - --collector.filesystem.ignored-mount-points
+  - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/doc
+
+# promtail
+promtail_dir: "/etc/promtail"
+promtail_config_file_path: "{{promtail_dir}}/promtail.yml"
+promtail_docker_version: 2.8.8
+promrtail_http_listen_port: 9080
+loki_push_url: ""
+loki_basic_auth_user: ""
+loki_basic_auth_password: ""
+
+
+###### Nginx ##########
+nginx_container_name: nginx
+home_dir: /home/{{ bootstrap_user }}
+nginx_dir: "{{ home_dir }}/nginx"
+nginx_conf_file: nginx.conf.j2
+nginx_auth_user: dataops
+nginx_auth_password: "IdP5uAZywN"
+nginx_node_exporter_local_port: 9100
+nginx_node_exporter_public_port: 39100
+nginx_promtail_local_port: 9080
+nginx_promtail_public_port: 39100
+nginx_query_svc_local_port: 8007
+nginx_query_svc_public_port: 39123
