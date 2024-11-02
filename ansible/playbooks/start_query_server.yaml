@@ -19,3 +19,6 @@
           DUCKDB_SERVER_PORT: "{{ duckdb_svc_container_port }}"  
         published_ports:
           - "{{ duckdb_svc_container_port }}:{{ duckdb_svc_container_port }}"
+
+    - name: Reload Query Service
+      ansible.builtin.command: docker restart {{ duckdb_svc_container_name }}
