@@ -1,4 +1,4 @@
 # Data-ingestion-platform
 
 ## todo:
-- use all public ports
+- transform with (airbyte trans of dbt) to postgres

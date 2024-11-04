@@ -122,7 +122,7 @@
       debug:
         msg: "Source ID: {{ sftp_server_source_response.json.sourceId }}"
 
-    - name: Create destination
+    - name: Create minio destination
       uri:
         url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/destinations'
         method: POST
@@ -159,8 +159,47 @@
     - name: Show destination ID
       debug:
         msg: "Destination ID: {{ storage_server_destination_response.json.destinationId }}"
+
+    - name: Create postgres destination
+      uri:
+        url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/destinations'
+        method: POST
+        headers:
+          accept: 'application/json'
+          authorization: 'Bearer {{ token_response.json.access_token }}'
+          content-type: 'application/json'
+        body: |
+          {
+            "configuration": {
+              "destinationType": "postgres",
+              "host": "{{ hostvars['src-server-0'].ansible_host }}",
+              "port": {{ postgres_port }},
+              "database": "{{ postgres_database }}",
+              "schema": "{{ postgres_schema }}",
+              "username": "{{ postgres_user }}",
+              "password": "{{ postgres_password }}",
+              "ssl_mode": {
+                "mode": "allow"
+              },
+              "raw_data_schema": "{{ postgres_schema }}",
+              "disable_type_dedupe": false,
+              "tunnel_method": {
+                "tunnel_method": "NO_TUNNEL"
+              }
+            },
+            "name": "postgres-dwh",
+            "workspaceId": "{{ workspace_response.json.data[0].workspaceId }}"
+          }
+        body_format: json
+        timeout: 120
+        return_content: yes
+      register: postgres_destination_response
+
+    - name: Show destination ID
+      debug:
+        msg: "Destination ID: {{ postgres_destination_response.json.destinationId }}"
     
-    - name: Create connection
+    - name: Create src -> lake connection
       uri:
         url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/connections'
         method: POST
@@ -211,3 +250,60 @@
     - name: Show connection ID
       debug:
         msg: "Connection ID: {{ src_storage_connection_response.json.connectionId }}"
+    
+
+    - name: Create src -> dwh connection
+      uri:
+        url: 'http://{{ ansible_host }}:{{ airbyte_port }}/api/public/v1/connections'
+        method: POST
+        headers:
+          accept: 'application/json'
+          authorization: 'Bearer {{ token_response.json.access_token }}'
+          content-type: 'application/json'
+        body: |
+          {
+            "name": "src-server -> DWH",
+            "sourceId": "{{ sftp_server_source_response.json.sourceId }}",
+            "destinationId": "{{ postgres_destination_response.json.destinationId }}",
+            "configurations": {
+              "streams": [
+                {
+                  "syncMode": "{{ airbyte_sync_mode }}",
+                  "name": "{{ airbyte_src_stream_name_1 }}",
+                  "cursorField": [
+                    "{{ airbyte_sftp_file_pattern }}"
+                  ]
+                },
+                {
+                  "syncMode": "{{ airbyte_sync_mode }}",
+                  "name": "{{ airbyte_src_stream_name_2 }}",
+                  "cursorField": [
+                    "{{ airbyte_sftp_file_pattern }}"
+                  ]
+                },
+                {
+                  "syncMode": "{{ airbyte_sync_mode }}",
+                  "name": "{{ airbyte_src_stream_name_3 }}",
+                  "cursorField": [
+                    "{{ airbyte_sftp_file_pattern }}"
+                  ]
+                }
+              ]
+            },
+            "schedule": {
+              "scheduleType": "cron",
+              "cronExpression": "{{ airbyte_sync_cron }}"
+            }
+          }
+        body_format: json
+        timeout: 120
+        return_content: yes
+      register: src_dwh_connection_response
+
+    - name: Show connection ID
+      debug:
+        msg: "Connection ID: {{ src_dwh_connection_response.json.connectionId }}"
+
+
+    
+    

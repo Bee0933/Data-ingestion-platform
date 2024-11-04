@@ -18,8 +18,8 @@ bootstrap-server: check-host-var
 	ansible-playbook ./playbooks/initial_bootstrap.yaml -l '$(HOSTS)' &&\
 			ansible-playbook ./playbooks/default_pakages.yaml -l '$(HOSTS)'
 
-start-reverse-proxy: check-host-var
-	ansible-playbook ./playbooks/start_reverse_proxy.yaml -l '$(HOSTS)'
+# start-reverse-proxy: check-host-var
+# 	ansible-playbook ./playbooks/start_reverse_proxy.yaml -l '$(HOSTS)'
 
 
 start-src-server: check-host-var
@@ -37,7 +37,7 @@ start-query-server: check-host-var
 
 # order command 
 order:
-	@echo "bootstrap-server  --> start-reverse-proxy --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server"
+	@echo "bootstrap-server  --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server"
 	
 
 # Help command
@@ -52,7 +52,7 @@ help:
 	@echo "  make start-airbyte-server HOSTS=<target_hosts>  [Start the Airbyte server]"
 	@echo "  make start-storage-server HOSTS=<target_hosts>  [Start the storage server]"
 	@echo "  make start-query-server HOSTS=<target_hosts>    [Start the query server]"
-	@echo "  make start-reverse-proxy HOSTS=<target_hosts>   [Start the nginx reverse proxy]"
+	# @echo "  make start-reverse-proxy HOSTS=<target_hosts>   [Start the nginx reverse proxy]"
 	@echo
 	@echo "Usage example:"
 	@echo "  make bootstrap-server HOSTS=src-server-0"

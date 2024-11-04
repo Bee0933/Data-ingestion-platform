@@ -10,9 +10,20 @@ http {
         listen              {{ nginx_sftp_public_port }};
 
         location / {
-            auth_basic      "Restricted";
-            auth_basic_user_file  /etc/nginx/.htpasswd;
+            {# auth_basic      "Restricted";
+            auth_basic_user_file  /etc/nginx/.htpasswd; #}
             proxy_pass      http://127.0.0.1:{{ sftp_port }};
+
+            # Support for WebSocket connections
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            # Forward essential headers
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
             
         }
     }
@@ -22,8 +33,8 @@ http {
         listen              {{ nginx_postgres_public_port }};
 
         location / {
-            auth_basic      "Restricted";
-            auth_basic_user_file  /etc/nginx/.htpasswd;
+            {# auth_basic      "Restricted";
+            auth_basic_user_file  /etc/nginx/.htpasswd; #}
             proxy_pass      http://127.0.0.1:{{ postgres_port }};
             
         }
@@ -67,6 +78,20 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
+
+            # Increase buffer size for large headers
+            client_max_body_size 50M;         # Adjust depending on the expected size of incoming data
+            proxy_buffer_size 16k;
+            proxy_buffers 4 32k;
+            proxy_busy_buffers_size 64k;
+            proxy_temp_file_write_size 64k;
+
+            # Enable keep-alive for client connections
+            keepalive_timeout 65;
+
+            # Enable keep-alive for backend connections
+            proxy_set_header Connection "";
+
             
         }
     }
@@ -88,6 +113,19 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
+
+            # Increase buffer size for large headers
+            client_max_body_size 50M;         # Adjust depending on the expected size of incoming data
+            proxy_buffer_size 16k;
+            proxy_buffers 4 32k;
+            proxy_busy_buffers_size 64k;
+            proxy_temp_file_write_size 64k;
+
+            # Enable keep-alive for client connections
+            keepalive_timeout 65;
+
+            # Enable keep-alive for backend connections
+            proxy_set_header Connection "";
             
         }
     }
@@ -114,6 +152,18 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
             proxy_http_version 1.1;  # Use HTTP/1.1 for WebSocket support
+
+            # Increase buffer size for large headers
+            client_max_body_size 50M;         # Adjust depending on the expected size of incoming data
+            proxy_buffer_size 16k;
+            proxy_busy_buffers_size 64k;
+            proxy_temp_file_write_size 64k;
+
+            # Enable keep-alive for client connections
+            keepalive_timeout 65;
+
+            # Enable keep-alive for backend connections
+            proxy_set_header Connection "";
             
         }
     }

@@ -31,6 +31,7 @@ postgres_database: postgres
 postgres_password: root
 postgres_user: root
 postgres_port: 5432
+postgres_schema: public
 postgres_dwh_user: dataops
 postgres_dwh_user_password: dataops
 postgres_dwh_database: dataops_db
