@@ -24,11 +24,11 @@
         restart_policy: always
         stop_timeout: "{{ node_exporter_container_stop_timeout }}"
         ports:
-           - "{{ node_exporter_local_port }}:{{ node_exporter_local_port }}"
+          - "{{ node_exporter_local_port }}:{{ node_exporter_local_port }}"  # Exposes the specified port
         volumes: "{{ node_exporter_container_volumes }}"
         env: "{{ node_exporter_container_env }}"
         networks: "{{ node_exporter_container_networks }}"
-        command: "{{ node_exporter_container_command }} "
+        command: "{{ node_exporter_container_command }}"
 
     # start promptail
     - name: Start Promtail

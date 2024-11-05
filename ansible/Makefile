@@ -18,9 +18,11 @@ bootstrap-server: check-host-var
 	ansible-playbook ./playbooks/initial_bootstrap.yaml -l '$(HOSTS)' &&\
 			ansible-playbook ./playbooks/default_pakages.yaml -l '$(HOSTS)'
 
-# start-reverse-proxy: check-host-var
-# 	ansible-playbook ./playbooks/start_reverse_proxy.yaml -l '$(HOSTS)'
+boostrap-metrics: check-host-var
+	ansible-playbook ./playbooks/bootsrap_platform_metrics.yaml -l '$(HOSTS)'
 
+start-monitor-server: check-host-var
+	ansible-playbook ./playbooks/start_monitor_server.yaml -l '$(HOSTS)'
 
 start-src-server: check-host-var
 	ansible-playbook ./playbooks/start_src_server.yaml -l '$(HOSTS)'
@@ -37,7 +39,7 @@ start-query-server: check-host-var
 
 # order command 
 order:
-	@echo "bootstrap-server  --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server"
+	@echo "bootstrap-server  --> bootstrap-metrics --> start-monitor-server --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server"
 	
 
 # Help command
@@ -48,11 +50,12 @@ help:
 	@echo "Available commands:"
 	@echo "  make install-requirements     		[Install Ansible dependencies]"
 	@echo "  make bootstrap-server HOSTS=<target_hosts>      [Bootstrap the server with initial setup and default packages]"
+	@echo "  make bootstrap-metrics HOSTS=<target_hosts>     [Bootstrap the platform nodes with metrics services]"
+	@echo "  make start-monitor-server HOSTS=<target_hosts>  [Start the monitoring server]"
 	@echo "  make start-src-server HOSTS=<target_hosts>      [Start the source server]"
 	@echo "  make start-airbyte-server HOSTS=<target_hosts>  [Start the Airbyte server]"
 	@echo "  make start-storage-server HOSTS=<target_hosts>  [Start the storage server]"
 	@echo "  make start-query-server HOSTS=<target_hosts>    [Start the query server]"
-	# @echo "  make start-reverse-proxy HOSTS=<target_hosts>   [Start the nginx reverse proxy]"
 	@echo
 	@echo "Usage example:"
 	@echo "  make bootstrap-server HOSTS=src-server-0"

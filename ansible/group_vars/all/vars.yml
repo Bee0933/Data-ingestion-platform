@@ -107,7 +107,7 @@ node_exporter_container_command:
   - --path.rootfs=/rootfs
   - --path.sysfs=/host/sys
   - --collector.filesystem.ignored-mount-points
-  - ^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/doc
+  - '^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/doc)'
 
 # promtail
 promtail_dir: "/etc/promtail"
@@ -117,3 +117,21 @@ promtail_docker_version: 2.8.8
 promrtail_http_listen_port: 9080
 loki_basic_auth_user: "dataops"
 loki_basic_auth_password: "dataops"
+
+
+# prometheus
+container_name_prometheus: prometheus
+prometheus_container_imagename: prom/prometheus
+prometheus_container_image_tag: latest
+prometheus_config_container_dir: /etc/prometheus
+metrics_auth_user: dataops
+prometheus_web_port: 9091
+home_dir: /home/{{bootstrap_user}}
+prometheus_config_dir: "{{home_dir}}/prometheus"
+prometheus_target_dir: "{{prometheus_config_dir}}/targets"
+prometheus_target_project_name: sftp-platform
+target_template: "targets.yml"
+rules_template: "rules.yml"
+target_group: "all"
+alertmanager_url: 127.0.0.1:{{alertmanager_web_port}}
+alertmanager_web_port: 9093

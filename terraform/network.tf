@@ -38,6 +38,18 @@ resource "digitalocean_firewall" "src-server-fw" {
   }
 
   inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9100"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9080"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
     protocol         = "icmp"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
@@ -67,6 +79,18 @@ resource "digitalocean_firewall" "src-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "443"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9080"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -134,6 +158,19 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  # node exporter
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9100"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+  # promtail 
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9080"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   inbound_rule {
     protocol         = "tcp"
     port_range       = "9000"
@@ -194,6 +231,18 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9080"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
 
 }
 
@@ -232,6 +281,17 @@ resource "digitalocean_firewall" "storage-server-fw" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "9001"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9100"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9080"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -279,6 +339,18 @@ resource "digitalocean_firewall" "storage-server-fw" {
     port_range            = "9001"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9080"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
 }
 
 # # DuckDB Server firewall configs
@@ -316,6 +388,18 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "9000"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9100"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "9080"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -363,6 +447,18 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "9000"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9080"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
@@ -416,7 +512,7 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   # prometheus
   inbound_rule {
     protocol         = "tcp"
-    port_range       = "9090"
+    port_range       = "9091"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -478,7 +574,7 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   # prometheus
   outbound_rule {
     protocol              = "tcp"
-    port_range            = "9090"
+    port_range            = "9091"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 

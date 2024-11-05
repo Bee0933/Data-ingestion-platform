@@ -6,10 +6,10 @@ positions:
   filename: /tmp/positions.yaml
 
 clients:
-  - url: "{{ hostvars['monitor-server-0'].ansible_host }}:{{ promrtail_http_listen_port }}"
-    basic_auth:
-      username: "{{ loki_basic_auth_user }}"
-      password: "{{ loki_basic_auth_password }}"
+  - url: "http://{{ hostvars['monitor-server-0'].ansible_host }}:{{ promrtail_http_listen_port }}"
+    # basic_auth:
+    #   username: "{{ loki_basic_auth_user }}"
+    #   password: "{{ loki_basic_auth_password }}"
 
 # local machine logs
 

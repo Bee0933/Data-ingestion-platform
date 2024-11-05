@@ -1,0 +1,32 @@
+---
+- labels:
+    job: src-server
+    instance: "src-server-0"
+    project_name: "{{ prometheus_target_project_name }}"
+    client_name: "{{ hostvars['src-server-0'].client_name }}"
+  targets:
+    - "{{ hostvars['src-server-0'].ansible_host }}:{{ node_exporter_local_port }}"
+
+- labels:
+    job: airbyte-server
+    instance: "airbyte-server-0"
+    project_name: "{{ prometheus_target_project_name }}"
+    client_name: "{{ hostvars['airbyte-server-0'].client_name }}"
+  targets:
+    - "{{ hostvars['airbyte-server-0'].ansible_host }}:{{ node_exporter_local_port }}"
+
+- labels:
+    job: storage-server
+    instance: "storage-server-0"
+    project_name: "{{ prometheus_target_project_name }}"
+    client_name: "{{ hostvars['storage-server-0'].client_name }}"
+  targets:
+    - "{{ hostvars['storage-server-0'].ansible_host }}:{{ node_exporter_local_port }}"
+
+- labels:
+    job: duckdb-server
+    instance: "duckdb-server-0"
+    project_name: "{{ prometheus_target_project_name }}"
+    client_name: "{{ hostvars['duckdb-server-0'].client_name }}"
+  targets:
+    - "{{ hostvars['duckdb-server-0'].ansible_host }}:{{ node_exporter_local_port }}"
