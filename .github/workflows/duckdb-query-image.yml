@@ -1,4 +1,4 @@
-name: Snapshot Service Image
+name: Duckdb-Query Service Image
 
 # Cancel workflow if there is a new change to the branch.
 concurrency:
