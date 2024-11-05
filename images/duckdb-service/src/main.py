@@ -34,7 +34,7 @@ s3_client = boto3.client(
 # Request model for SQL query with default values
 class QueryRequest(BaseModel):
     file_name: str = Field(default="your/filepath.csv", description="The name of the CSV file to query.")
-    query: str = Field(default="SELECT * FROM my_table", description="The SQL query to execute.")
+    query: str = Field(default="SELECT * FROM my_table", description="The SQL query to execute (csv file_name given defaults to `my_table`).")
 
 @app.get("/list-files", response_model=List[str])
 async def list_files():
