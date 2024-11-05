@@ -18,7 +18,8 @@ sftp_remote_dir: /home/sftp
 sftp_template_data: "{{ sftp_dir }}/template"
 sftp_docker_image: emberstack/sftp
 sftp_port: 2222
-files_to_upload:                       # List of files to upload
+ # template list of files to upload
+files_to_upload:                      
   - "for-hire.csv"
   - "green-taxi.csv"
   - "yellow-taxi.csv"
@@ -31,6 +32,7 @@ postgres_database: postgres
 postgres_password: root
 postgres_user: root
 postgres_port: 5432
+postgres_raw_data_schema: raw
 postgres_schema: public
 postgres_dwh_user: dataops
 postgres_dwh_user_password: dataops
@@ -91,15 +93,15 @@ node_exporter_container_name: node_exporter
 node_exporter_container_image: prom/node-exporter:v1.5.0 
 node_exporter_container_env: {}
 node_exporter_local_port: 9100
-node_exporter_container_ports:
-  - "{{ node_exporter_local_port }}:{{ node_exporter_local_port }}"
-node_exporter_container_volumes:
-  - /proc:/host/proc:ro
-  - /sys:/host/sys:ro
-  - /:/rootfs:ro
 node_exporter_container_stop_timeout: "30"
 node_exporter_container_networks:
   - name: host
+# node_exporter_container_ports:
+#   - "{{ node_exporter_local_port }}:{{ node_exporter_local_port }}"
+node_exporter_container_volumes:
+  - /:/rootfs:ro
+  - /sys:/host/sys:ro
+  - /proc:/host/proc:ro
 node_exporter_container_command:
   - --path.procfs=/host/proc
   - --path.rootfs=/rootfs
@@ -110,27 +112,8 @@ node_exporter_container_command:
 # promtail
 promtail_dir: "/etc/promtail"
 promtail_config_file_path: "{{promtail_dir}}/promtail.yml"
+promtail_docker_imagename: grafana/promtail
 promtail_docker_version: 2.8.8
 promrtail_http_listen_port: 9080
-loki_push_url: ""
-loki_basic_auth_user: ""
-loki_basic_auth_password: ""
-
-
-###### Nginx ##########
-nginx_container_name: nginx
-home_dir: /home/{{ bootstrap_user }}
-nginx_dir: "{{ home_dir }}/nginx"
-nginx_conf_file: nginx.conf.j2
-nginx_auth_user: dataops
-nginx_auth_password: "IdP5uAZywN"
-# Ports
-nginx_sftp_public_port: 39123
-nginx_postgres_public_port: 39124
-nginx_airbyte_public_port: 39125
-nginx_minio_console_public_port: 39126
-nginx_minio_api_public_port: 39127
-nginx_query_svc_public_port: 39128
-nginx_node_exporter_public_port: 39100
-nginx_promtail_public_port: 39101
-nginx_prometheus_public_port: 39102
+loki_basic_auth_user: "dataops"
+loki_basic_auth_password: "dataops"

@@ -23,7 +23,8 @@
         state: started
         restart_policy: always
         stop_timeout: "{{ node_exporter_container_stop_timeout }}"
-        ports: "{{ node_exporter_container_ports }}"
+        ports:
+           - "{{ node_exporter_local_port }}:{{ node_exporter_local_port }}"
         volumes: "{{ node_exporter_container_volumes }}"
         env: "{{ node_exporter_container_env }}"
         networks: "{{ node_exporter_container_networks }}"
@@ -34,13 +35,12 @@
       docker_container:
         name: promtail
         state: started
-        image: "grafana/promtail:{{promtail_docker_version}}"
+        image: "{{ promtail_docker_imagename }}:{{promtail_docker_version}}"
         pull: true
         command: "-config.file={{promtail_config_file_path}}"
         volumes:
           - "{{promtail_dir}}:{{promtail_dir}}"
           - "/var/log:/var/log"
-          # to read container labels and logs
           - /var/lib/docker/containers:/var/lib/docker/containers:ro
           - /var/run/docker.sock:/var/run/docker.sock
         restart_policy: always

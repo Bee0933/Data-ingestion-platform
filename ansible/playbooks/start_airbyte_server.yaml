@@ -181,7 +181,7 @@
               "ssl_mode": {
                 "mode": "allow"
               },
-              "raw_data_schema": "{{ postgres_schema }}",
+              "raw_data_schema": "{{ postgres_raw_data_schema }}",
               "disable_type_dedupe": false,
               "tunnel_method": {
                 "tunnel_method": "NO_TUNNEL"
