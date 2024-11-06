@@ -18,7 +18,7 @@ bootstrap-server: check-host-var
 	ansible-playbook ./playbooks/initial_bootstrap.yaml -l '$(HOSTS)' &&\
 			ansible-playbook ./playbooks/default_pakages.yaml -l '$(HOSTS)'
 
-boostrap-metrics: check-host-var
+bootstrap-metrics: check-host-var
 	ansible-playbook ./playbooks/bootsrap_platform_metrics.yaml -l '$(HOSTS)'
 
 start-monitor-server: check-host-var

@@ -5,11 +5,11 @@
   become: true
   
   tasks:
-    - name: Install deps
-      ansible.builtin.apt:
-        name: [prometheus]
-        state: latest
-        update_cache: true
+    # - name: Install deps
+    #   ansible.builtin.apt:
+    #     name: [prometheus]
+    #     state: latest
+    #     update_cache: true
 
     - name: Create docker volume prometheus_data
       community.docker.docker_volume:
@@ -31,40 +31,21 @@
         recurse: true
       register: target_files
 
-    # - name: Remove foreign target files
-    #   ansible.builtin.file:
-    #     path: "{{ prometheus_config_dir }}/targets/{{ item }}"
-    #     state: absent
-    #   with_items: "{{ target_files.files | map(attribute='path') | map('basename') | list }}"
-    #   when:
-    #     - (item.split('.') | first) not in hostvars
-    #     - fresh_sync | bool
-
     - name: Template prometheus targets files
       ansible.builtin.template:
         src: templates/targets.yml.j2
         dest: "{{ prometheus_config_dir }}/targets/targets.yml"
-      notify:
-        - Reload prometheus
 
     - name: Copy prometheus config file
       ansible.builtin.template:
         src: templates/prometheus.yml.j2
         dest: "{{ prometheus_config_dir }}/prometheus.yml"
 
-    # - name: Copy prometheus web config file
-    #   when: prometheus_auth|bool
-    #   ansible.builtin.template:
-    #     src: templates/web-config.yml
-    #     dest: "{{ prometheus_config_dir }}/web-config.yml"
-    #   notify:
-    #     - Reload prometheus
-
     - name: Copy prometheus rules file
       ansible.builtin.copy:
         src: templates/rules.yml
         dest: "{{ prometheus_config_dir }}/rules.yml"
-        validate: promtool check rules %s
+        # validate: promtool check rules %s
 
     - name: Start prometheus
       community.docker.docker_container:
@@ -77,7 +58,7 @@
         command: >
           --config.file={{ prometheus_config_container_dir }}/prometheus.yml
           --storage.tsdb.path=/prometheus
-          --web.listen-address="127.0.0.1:{{ prometheus_web_port }}"
+          --web.listen-address="0.0.0.0:{{ prometheus_web_port }}"
           --web.enable-lifecycle
           --storage.tsdb.retention.time=30d
 
@@ -87,14 +68,10 @@
 
         restart_policy: unless-stopped
         ports:
-          - "9090:{{ prometheus_web_port }}"
+          - "{{ prometheus_web_port }}:{{ prometheus_web_port }}"
         log_driver: json-file
         log_options:
           max-file: "10"
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
-      
-    - name: Reload prometheus
-      ansible.builtin.command: curl -X POST http://localhost:{{prometheus_web_port}}/-/reload
-

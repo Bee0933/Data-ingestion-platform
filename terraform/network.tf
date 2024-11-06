@@ -512,7 +512,7 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   # prometheus
   inbound_rule {
     protocol         = "tcp"
-    port_range       = "9091"
+    port_range       = "9090"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -574,7 +574,7 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   # prometheus
   outbound_rule {
     protocol              = "tcp"
-    port_range            = "9091"
+    port_range            = "9090"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -589,6 +589,13 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "3100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # node exporter
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9100"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }

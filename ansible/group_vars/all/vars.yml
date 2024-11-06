@@ -125,7 +125,7 @@ prometheus_container_imagename: prom/prometheus
 prometheus_container_image_tag: latest
 prometheus_config_container_dir: /etc/prometheus
 metrics_auth_user: dataops
-prometheus_web_port: 9091
+prometheus_web_port: 9090
 home_dir: /home/{{bootstrap_user}}
 prometheus_config_dir: "{{home_dir}}/prometheus"
 prometheus_target_dir: "{{prometheus_config_dir}}/targets"
