@@ -75,3 +75,50 @@
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
+    
+    # Grafana
+    - name: Create persistent data directory for Grafana
+      ansible.builtin.file:
+        path: "{{ grafana_data_dir }}"
+        state: directory
+        mode: "0755"
+    
+    - name: Ensure the correct permissions for Grafana directories
+      ansible.builtin.file:
+        path: "{{ grafana_data_dir }}"
+        owner: 472  
+        group: 472
+        mode: "0755"
+        state: directory
+
+    - name: Ensure the correct permissions for Grafana config directory
+      ansible.builtin.file:
+        path: "{{ grafana_config_dir }}"
+        owner: 472
+        group: 472
+        mode: "0755"
+        state: directory
+
+    - name: Pull the Grafana Docker image
+      community.docker.docker_image:
+        name: "{{ grafana_image }}"
+        source: pull
+
+    - name: Run Grafana container
+      community.docker.docker_container:
+        name: "{{ grafana_container_name }}"
+        image: "{{ grafana_image }}:{{ grafana_image_tag }}"
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ grafana_port }}:{{ grafana_port }}"
+        volumes:
+          - "{{ grafana_data_dir }}:/var/lib/grafana"  
+          - "{{ grafana_config_dir }}:/etc/grafana" 
+        env:
+          "{{ grafana_env_vars }}"
+        log_driver: "json-file"
+        log_options:
+          max-size: "100m"
+          max-file: "5"
+          mode: "non-blocking"
