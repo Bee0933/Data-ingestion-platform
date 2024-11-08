@@ -75,37 +75,21 @@
       ansible.builtin.file:
         path: "{{ grafana_data_dir }}"
         state: directory
-        mode: "0755"
-    
-    - name: Ensure the correct permissions for Grafana directories
-      ansible.builtin.file:
-        path: "{{ grafana_data_dir }}"
-        owner: 472  
-        group: 472
-        mode: "0755"
-        state: directory
+        mode: "0777"
 
-    - name: Ensure the correct permissions for Grafana config directory
+    - name: Create config directory for Grafana
       ansible.builtin.file:
         path: "{{ grafana_config_dir }}"
-        owner: 472
-        group: 472
-        mode: "0755"
         state: directory
+        mode: "0777"
 
-    - name: Create a default grafana.ini if missing
-      ansible.builtin.copy:
+    - name: Create grafana.ini from template
+      ansible.builtin.template:
+        src: templates/grafana.ini.j2
         dest: "{{ grafana_config_dir }}/grafana.ini"
-        content: |
-          # Basic grafana.ini content
-          [paths]
-          data = /var/lib/grafana
-          logs = /var/log/grafana
         owner: 472
         group: 472
         mode: "0644"
-      when: not ansible.builtin.stat(path="{{ grafana_config_dir }}/grafana.ini").stat.exists
-
 
     - name: Pull the Grafana Docker image
       community.docker.docker_image:
@@ -121,12 +105,8 @@
         ports:
           - "{{ grafana_port }}:{{ grafana_port }}"
         volumes:
-          - "{{ grafana_data_dir }}:/var/lib/grafana"  
-          - "{{ grafana_config_dir }}:/etc/grafana" 
-        env:
-          GF_SECURITY_ADMIN_USER: "{{ grafana_admin_user }}"
-          GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_admin_password }}"
-          GF_SERVER_HTTP_PORT: "{{ grafana_port }}"
+          - "{{ grafana_data_dir }}:/var/lib/grafana"
+          - "{{ grafana_config_dir }}:/etc/grafana"
         log_driver: "json-file"
         log_options:
           max-size: "100m"
