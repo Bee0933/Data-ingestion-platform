@@ -5,12 +5,6 @@
   become: true
   
   tasks:
-    # - name: Install deps
-    #   ansible.builtin.apt:
-    #     name: [prometheus]
-    #     state: latest
-    #     update_cache: true
-
     - name: Create docker volume prometheus_data
       community.docker.docker_volume:
         name: prometheus_data
@@ -99,6 +93,20 @@
         mode: "0755"
         state: directory
 
+    - name: Create a default grafana.ini if missing
+      ansible.builtin.copy:
+        dest: "{{ grafana_config_dir }}/grafana.ini"
+        content: |
+          # Basic grafana.ini content
+          [paths]
+          data = /var/lib/grafana
+          logs = /var/log/grafana
+        owner: 472
+        group: 472
+        mode: "0644"
+      when: not ansible.builtin.stat(path="{{ grafana_config_dir }}/grafana.ini").stat.exists
+
+
     - name: Pull the Grafana Docker image
       community.docker.docker_image:
         name: "{{ grafana_image }}"
@@ -107,7 +115,7 @@
     - name: Run Grafana container
       community.docker.docker_container:
         name: "{{ grafana_container_name }}"
-        image: "{{ grafana_image }}:{{ grafana_image_tag }}"
+        image: "{{ grafana_image }}"
         state: started
         restart_policy: unless-stopped
         ports:
@@ -116,9 +124,12 @@
           - "{{ grafana_data_dir }}:/var/lib/grafana"  
           - "{{ grafana_config_dir }}:/etc/grafana" 
         env:
-          "{{ grafana_env_vars }}"
+          GF_SECURITY_ADMIN_USER: "{{ grafana_admin_user }}"
+          GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_admin_password }}"
+          GF_SERVER_HTTP_PORT: "{{ grafana_port }}"
         log_driver: "json-file"
         log_options:
           max-size: "100m"
           max-file: "5"
           mode: "non-blocking"
+        privileged: true
