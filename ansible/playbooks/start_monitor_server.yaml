@@ -79,14 +79,10 @@
       loop:
         - "{{ grafana_data_dir }}"
         - "{{ grafana_config_dir }}"
-        - "{{ grafana_provisioning_dir }}"
+        - "{{ grafana_provisioning_base_dir }}"
+        - "{{ provisoning_dashboard_dir }}"
+        - "{{ provisoning_datasource_dir }}"
         - "{{ grafana_dashboards_dir }}"
-
-    # - name: Create config directory for Grafana
-    #   ansible.builtin.file:
-    #     path: "{{ grafana_config_dir }}"
-    #     state: directory
-    #     mode: "0777"
 
     - name: Create grafana.ini from template
       ansible.builtin.template:
@@ -99,13 +95,21 @@
     - name: Create datasource from template
       ansible.builtin.template:
         src: templates/datasource.yaml.j2
-        dest: "{{ grafana_provisioning_dir }}/datasource.yaml"
+        dest: "{{ provisoning_datasource_dir }}/datasource.yaml"
+        owner: 472
+        group: 472
+        mode: "0644"
+    
+    - name: Create provisioning dashboard from template
+      ansible.builtin.template:
+        src: templates/dashboard.yaml
+        dest: "{{ provisoning_dashboard_dir }}/dashboard.yaml"
         owner: 472
         group: 472
         mode: "0644"
 
-    - name: Create dashboard from template
-      ansible.builtin.template:
+    - name: Copy dashboard file to destination
+      ansible.builtin.copy:
         src: templates/platform_metrics.json
         dest: "{{ grafana_dashboards_dir }}/platform_metrics.json"
         owner: 472
@@ -128,7 +132,7 @@
         volumes:
           - "{{ grafana_data_dir }}:/var/lib/grafana"
           - "{{ grafana_config_dir }}:/etc/grafana"
-          - "{{ grafana_provisioning_dir }}:/etc/grafana/provisioning"
+          - "{{ grafana_provisioning_base_dir }}:/etc/grafana/provisioning"
           - "{{ grafana_dashboards_dir }}/:/etc/grafana/provisioning/dashboard-definitions"
         log_driver: "json-file"
         log_options:
