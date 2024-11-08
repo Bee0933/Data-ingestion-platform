@@ -71,22 +71,43 @@
           max-buffer-size: 4m
     
     # Grafana
-    - name: Create persistent data directory for Grafana
+    - name: Create multiple dependent directories for Grafana
       ansible.builtin.file:
-        path: "{{ grafana_data_dir }}"
+        path: "{{ item }}"
         state: directory
         mode: "0777"
+      loop:
+        - "{{ grafana_data_dir }}"
+        - "{{ grafana_config_dir }}"
+        - "{{ grafana_provisioning_dir }}"
+        - "{{ grafana_dashboards_dir }}"
 
-    - name: Create config directory for Grafana
-      ansible.builtin.file:
-        path: "{{ grafana_config_dir }}"
-        state: directory
-        mode: "0777"
+    # - name: Create config directory for Grafana
+    #   ansible.builtin.file:
+    #     path: "{{ grafana_config_dir }}"
+    #     state: directory
+    #     mode: "0777"
 
     - name: Create grafana.ini from template
       ansible.builtin.template:
         src: templates/grafana.ini.j2
         dest: "{{ grafana_config_dir }}/grafana.ini"
+        owner: 472
+        group: 472
+        mode: "0644"
+    
+    - name: Create datasource from template
+      ansible.builtin.template:
+        src: templates/datasource.yaml.j2
+        dest: "{{ grafana_provisioning_dir }}/datasource.yaml"
+        owner: 472
+        group: 472
+        mode: "0644"
+
+    - name: Create dashboard from template
+      ansible.builtin.template:
+        src: templates/platform_metrics.json
+        dest: "{{ grafana_dashboards_dir }}/platform_metrics.json"
         owner: 472
         group: 472
         mode: "0644"
@@ -99,7 +120,7 @@
     - name: Run Grafana container
       community.docker.docker_container:
         name: "{{ grafana_container_name }}"
-        image: "{{ grafana_image }}"
+        image: "{{ grafana_image }}:{{ grafana_image_tag }}"
         state: started
         restart_policy: unless-stopped
         ports:
@@ -107,6 +128,8 @@
         volumes:
           - "{{ grafana_data_dir }}:/var/lib/grafana"
           - "{{ grafana_config_dir }}:/etc/grafana"
+          - "{{ grafana_provisioning_dir }}:/etc/grafana/provisioning"
+          - "{{ grafana_dashboards_dir }}/:/etc/grafana/provisioning/dashboard-definitions"
         log_driver: "json-file"
         log_options:
           max-size: "100m"
