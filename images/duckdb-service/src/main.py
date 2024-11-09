@@ -1,5 +1,5 @@
 import json, os, duckdb, boto3, logging, uvicorn, tempfile
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import List
 
@@ -36,7 +36,7 @@ class QueryRequest(BaseModel):
     file_name: str = Field(default="your/filepath.csv", description="The name of the CSV file to query.")
     query: str = Field(default="SELECT * FROM my_table", description="The SQL query to execute (csv file_name given defaults to `my_table`).")
 
-@app.get("/list-files", response_model=List[str])
+@app.get("/list-files", response_model=List[str], status_code=status.HTTP_200_OK)
 async def list_files():
     """
     Lists CSV files in the MinIO bucket.
@@ -48,9 +48,9 @@ async def list_files():
         return files
     except Exception as e:
         logging.info(e)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@app.post("/query")
+@app.post("/query", status_code=status.HTTP_201_CREATED)
 async def query_duckdb(request: QueryRequest):
     """
     Accepts file name and SQL query to execute using DuckDB, returning the results in JSON.
@@ -97,7 +97,7 @@ async def query_duckdb(request: QueryRequest):
         return {"result": airbyte_data_results}
     except Exception as e:
         logging.info(e)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(DUCKDB_SERVER_PORT))
