@@ -157,7 +157,8 @@ grafana_prometheus_datasource: prometheus
 # Loki
 loki_dir: "/etc/loki"
 loki_data_dir: "/data/loki"
+loki_rules_directory: "/data/loki/rules"
 loki_docker_image: grafana/loki
-loki_docker_version: 2.9.0
+loki_docker_version: latest
 loki_http_listen_port: 3100
 # loki_grpc_listen_port: 9096

@@ -19,22 +19,22 @@ common:
 schema_config:
   configs:
     - from: 2024-11-09
-      store: boltdb-shipper
+      store: tsdb
       object_store: filesystem
-      schema: v11
+      schema: v13
       index:
         prefix: index_
         period: 24h
 
-chunk_store_config:
-  max_look_back_period: 360h
-
 limits_config:
   deletion_mode: "filter-and-delete"
-  retention_period: 360h 
+  retention_period: 360h
+  allow_structured_metadata: false 
+
 compactor:
   working_directory: {{loki_data_dir}}/compactor
   delete_request_cancel_period: 10m 
   retention_enabled: true 
-  retention_delete_delay: 2h 
+  retention_delete_delay: 2h
+  delete_request_store: filesystem 
 

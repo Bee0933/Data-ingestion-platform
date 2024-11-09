@@ -14,7 +14,7 @@ scrape_configs:
       - files:
           - "{{ prometheus_config_container_dir }}/targets/*.yml"
 
- alerting:
+alerting:
   alertmanagers:
     - scheme: http
       static_configs:
