@@ -13,8 +13,9 @@ scrape_configs:
     file_sd_configs:
       - files:
           - "{{ prometheus_config_container_dir }}/targets/*.yml"
-# alerting:
-#  alertmanagers:
-#    - scheme: http
-#      static_configs:
-#        - targets: ["{{ alertmanager_url }}"] 
+
+ alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets: ["{{ alertmanager_url }}"] 

@@ -69,6 +69,41 @@
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
+
+    # Loki
+    - name: Create loki config dir
+      file:
+        path: "{{loki_dir}}"
+        state: directory
+
+    - name: Create loki data dir
+      file:
+        path: "{{loki_data_dir}}"
+        state: directory
+
+    - name: Template config file
+      template:
+        src: templates/loki.yml.j2
+        dest: "{{loki_dir}}/loki.yml"
+
+    - name: Start Loki
+      docker_container:
+        name: loki
+        state: started
+        image: "{{ loki_docker_image }}:{{loki_docker_version}}"
+        pull: true
+        command: "-config.file={{loki_dir}}/loki.yml"
+        volumes:
+          - "{{loki_dir}}:{{loki_dir}}"
+          - "{{loki_data_dir}}:{{loki_data_dir}}"
+        restart_policy: unless-stopped
+        network_mode: host
+        log_driver: json-file
+        log_options:
+          max-file: "10"
+          max-size: 30m
+          mode: non-blocking
+          max-buffer-size: 4m
     
     # Grafana
     - name: Create multiple dependent directories for Grafana
