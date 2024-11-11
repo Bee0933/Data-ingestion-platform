@@ -106,7 +106,7 @@ resource "digitalocean_firewall" "src-server-fw" {
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
-   outbound_rule {
+  outbound_rule {
     protocol              = "tcp"
     port_range            = "3100"
     destination_addresses = ["0.0.0.0/0", "::/0"]
