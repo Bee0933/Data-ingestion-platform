@@ -34,7 +34,7 @@
         command: server /data --console-address ":{{ minio_console_port }}"
         labels:
           promtail_logging: "true"
-          scrape_location: "app"
+          scrape_location: "minio"
           client_name: "minio-svc"
     
     - name: Wait for MinIO to start

@@ -39,7 +39,7 @@
         restart_policy: always
         labels:
           promtail_logging: "true"
-          scrape_location: "app"
+          scrape_location: "sftp"
           client_name: "sftp-svc"
     
     - name: Wait for SFTP server to be ready
@@ -118,7 +118,7 @@
         command: -c config_file=/etc/postgresql/postgresql.conf
         labels:
           promtail_logging: "true"
-          scrape_location: "app"
+          scrape_location: "postgres"
           client_name: "postgres-svc"
     
     # - name: Create a new PostgreSQL user
