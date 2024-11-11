@@ -115,6 +115,7 @@ promtail_config_file_path: "{{promtail_dir}}/promtail.yml"
 promtail_docker_imagename: grafana/promtail
 promtail_docker_version: 2.8.8
 promtail_http_listen_port: 9080
+promtail_gRPC_port: 36543
 loki_basic_auth_user: "dataops"
 loki_basic_auth_password: "dataops"
 
@@ -161,4 +162,3 @@ loki_rules_directory: "/data/loki/rules"
 loki_docker_image: grafana/loki
 loki_docker_version: latest
 loki_http_listen_port: 3100
-# loki_grpc_listen_port: 9096

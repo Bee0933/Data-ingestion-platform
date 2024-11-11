@@ -104,13 +104,15 @@
           - "{{loki_dir}}:{{loki_dir}}"
           - "{{loki_data_dir}}:{{loki_data_dir}}"
         restart_policy: unless-stopped
-        network_mode: host
         log_driver: json-file
         log_options:
           max-file: "10"
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
+        ports:
+          - "{{ loki_http_listen_port }}:{{ loki_http_listen_port }}"  
+
     
     # Grafana
     - name: Create multiple dependent directories for Grafana

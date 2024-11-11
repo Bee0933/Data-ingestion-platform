@@ -36,6 +36,8 @@
         name: promtail
         state: started
         image: "{{ promtail_docker_imagename }}:{{promtail_docker_version}}"
+        labels:
+          promtail_logging: "true"
         pull: true
         command: "-config.file={{ promtail_config_file_path }}"
         volumes:
@@ -45,7 +47,8 @@
           - /var/run/docker.sock:/var/run/docker.sock
         restart_policy: always
         restart: true
-        network_mode: host
+        published_ports:
+          - "{{ promtail_http_listen_port }}:{{ promtail_http_listen_port }}"  
         log_driver: json-file
         log_options:
           max-file: "10"

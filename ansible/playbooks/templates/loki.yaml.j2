@@ -1,8 +1,7 @@
 auth_enabled: false
 
 server:
-  http_listen_port: {{loki_http_listen_port}}
-  {# grpc_listen_port: {{loki_grpc_listen_port}} #}
+  http_listen_port: {{ loki_http_listen_port }}
 
 common:
   path_prefix: {{loki_data_dir}}
@@ -15,8 +14,6 @@ common:
     instance_addr: 0.0.0.0
     kvstore:
       store: inmemory
-    zone: "zone1"  
-    zone_awareness_enabled: true  
 
 schema_config:
   configs:
