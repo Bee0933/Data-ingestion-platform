@@ -50,6 +50,12 @@ resource "digitalocean_firewall" "src-server-fw" {
   }
 
   inbound_rule {
+    protocol         = "tcp"
+    port_range       = "3100"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
     protocol         = "icmp"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
@@ -97,6 +103,12 @@ resource "digitalocean_firewall" "src-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "5432"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+   outbound_rule {
+    protocol              = "tcp"
+    port_range            = "3100"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
@@ -177,6 +189,12 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "3100"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
   outbound_rule {
     protocol              = "tcp"
     port_range            = "53"
@@ -243,6 +261,12 @@ resource "digitalocean_firewall" "airbyte-server-fw" {
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "3100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
 
 }
 
@@ -292,6 +316,12 @@ resource "digitalocean_firewall" "storage-server-fw" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "9080"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "3100"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -351,6 +381,12 @@ resource "digitalocean_firewall" "storage-server-fw" {
     port_range            = "9080"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "3100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
 }
 
 # # DuckDB Server firewall configs
@@ -400,6 +436,12 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "9080"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "3100"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -459,6 +501,12 @@ resource "digitalocean_firewall" "duckdb-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "9080"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "3100"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
@@ -596,6 +644,12 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   outbound_rule {
     protocol              = "tcp"
     port_range            = "9100"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "9080"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }

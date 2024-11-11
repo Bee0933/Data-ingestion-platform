@@ -37,7 +37,7 @@
         state: started
         image: "{{ promtail_docker_imagename }}:{{promtail_docker_version}}"
         pull: true
-        command: "-config.file={{promtail_config_file_path}}"
+        command: "-config.file={{ promtail_config_file_path }}"
         volumes:
           - "{{promtail_dir}}:{{promtail_dir}}"
           - "/var/log:/var/log"

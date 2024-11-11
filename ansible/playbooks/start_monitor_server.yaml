@@ -99,7 +99,7 @@
         state: started
         image: "{{ loki_docker_image }}:{{loki_docker_version}}"
         pull: true
-        command: "-config.file={{loki_dir}}/loki.yaml"
+        command: "-config.file={{ loki_dir }}/loki.yaml -config.expand-env=true"
         volumes:
           - "{{loki_dir}}:{{loki_dir}}"
           - "{{loki_data_dir}}:{{loki_data_dir}}"

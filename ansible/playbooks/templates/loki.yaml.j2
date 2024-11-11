@@ -12,9 +12,11 @@ common:
       rules_directory: {{loki_data_dir}}/rules
   replication_factor: 1
   ring:
-    instance_addr: 127.0.0.1
+    instance_addr: 0.0.0.0
     kvstore:
       store: inmemory
+    zone: "zone1"  
+    zone_awareness_enabled: true  
 
 schema_config:
   configs:
