@@ -32,6 +32,10 @@
           MINIO_ROOT_USER: "{{ minio_root_usr }}"
           MINIO_ROOT_PASSWORD: "{{ minio_root_password }}"
         command: server /data --console-address ":{{ minio_console_port }}"
+        labels:
+          promtail_logging: "true"
+          scrape_location: "app"
+          client_name: "minio-svc"
     
     - name: Wait for MinIO to start
       wait_for:

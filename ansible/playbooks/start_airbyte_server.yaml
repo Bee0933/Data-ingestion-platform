@@ -16,6 +16,10 @@
         cmd: "abctl local install --port {{ airbyte_port }} --low-resource-mode --insecure-cookies"
       args:
         executable: /bin/bash
+      labels:
+          promtail_logging: "true"
+          scrape_location: "app"
+          client_name: "airbyte-svc"
 
     - name: Set up Airbyte credentials - email
       ansible.builtin.shell:

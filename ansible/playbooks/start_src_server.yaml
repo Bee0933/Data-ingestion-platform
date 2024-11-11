@@ -37,6 +37,10 @@
           - "{{ sftp_dir }}:{{ sftp_remote_dir }}"
         state: started
         restart_policy: always
+        labels:
+          promtail_logging: "true"
+          scrape_location: "app"
+          client_name: "sftp-svc"
     
     - name: Wait for SFTP server to be ready
       wait_for:
@@ -112,6 +116,10 @@
         published_ports:
           - "{{ postgres_port }}:{{ postgres_port }}"
         command: -c config_file=/etc/postgresql/postgresql.conf
+        labels:
+          promtail_logging: "true"
+          scrape_location: "app"
+          client_name: "postgres-svc"
     
     # - name: Create a new PostgreSQL user
     #   command: >
