@@ -567,7 +567,7 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   # alert manager
   inbound_rule {
     protocol         = "tcp"
-    port_range       = "9093"
+    port_range       = "9095"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
@@ -629,7 +629,7 @@ resource "digitalocean_firewall" "monitor-server-fw" {
   # alert manager
   outbound_rule {
     protocol              = "tcp"
-    port_range            = "9093"
+    port_range            = "9095"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 

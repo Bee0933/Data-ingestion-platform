@@ -18,7 +18,7 @@ bootstrap-server: check-host-var
 	ansible-playbook ./playbooks/initial_bootstrap.yaml -l '$(HOSTS)' &&\
 			ansible-playbook ./playbooks/default_pakages.yaml -l '$(HOSTS)'
 
-bootstrap-metrics: check-host-var
+start-metrics: check-host-var
 	ansible-playbook ./playbooks/bootsrap_platform_metrics.yaml -l '$(HOSTS)'
 
 start-monitor-server: check-host-var
@@ -39,7 +39,7 @@ start-query-server: check-host-var
 
 # order command 
 order:
-	@echo "bootstrap-server  --> bootstrap-metrics --> start-monitor-server --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server"
+	@echo "bootstrap-server  --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server --> start-monitor-server --> start-metrics"
 	
 
 # Help command

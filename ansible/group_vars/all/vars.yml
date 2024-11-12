@@ -135,8 +135,6 @@ target_template: "targets.yml"
 rules_template: "rules.yml"
 target_group: "all"
 alertmanager_url: 127.0.0.1:{{alertmanager_web_port}}
-alertmanager_web_port: 9093
-
 
 # grafana
 grafana_image: "grafana/grafana-enterprise"
@@ -162,3 +160,14 @@ loki_rules_directory: "/data/loki/rules"
 loki_docker_image: grafana/loki
 loki_docker_version: latest
 loki_http_listen_port: 3100
+
+# Alert Manager
+alertmanager_container_name: alertmanager
+alertmanager_image_tag: latest
+alertmanager_web_port: 9095
+alert_manager_home_dir_default: /home/{{bootstrap_user}}
+alertmanager_config_dir: "{{ alert_manager_home_dir_default }}/alertmanager"
+alertmanager_config_file: "alertmanager.yml"
+alertmanager_rule_template: "alertmanager.yml"
+slack_wehbook: "https://hooks.slack.com/services/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"
+slack_channel: workflow-ochestration

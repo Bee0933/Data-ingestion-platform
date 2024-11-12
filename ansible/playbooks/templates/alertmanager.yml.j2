@@ -1,0 +1,28 @@
+global:
+  resolve_timeout: 1m
+
+route:
+  group_by: [alertname]
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 10s
+  receiver: "slack-alerts"
+  routes:
+    # Route alerts to Slack for visibility
+    - receiver: "slack-alerts"
+      matchers:
+        - severity=~"critical|warning"
+
+receivers:
+  - name: "slack-alerts"
+    slack_configs:
+      - api_url: '{{ slack_wehbook }}'
+        channel: '{{ slack_channel }}'  # Slack channel where you want to send alerts
+        send_resolved: true
+        text: |
+          {% raw %}
+          *Alert:* {{ .CommonLabels.alertname }}
+          *Severity:* {{ .CommonLabels.severity }}
+          *Description:* {{ .CommonAnnotations.description }}
+          *Details:* {{ .Annotations }}
+          {% endraw %}

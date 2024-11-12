@@ -18,4 +18,4 @@ alerting:
   alertmanagers:
     - scheme: http
       static_configs:
-        - targets: ["{{ alertmanager_url }}"] 
+        - targets: ["{{ hostvars['monitor-server-0'].ansible_host }}:{{ alertmanager_web_port }}"] 

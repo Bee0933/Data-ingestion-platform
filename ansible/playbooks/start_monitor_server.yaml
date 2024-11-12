@@ -184,3 +184,51 @@
           max-file: "5"
           mode: "non-blocking"
         privileged: true
+    
+    # Alert manager
+    - name: Install deps
+      ansible.builtin.apt:
+        name: [prometheus-alertmanager]
+        state: latest
+        update_cache: true
+
+    - name: Create docker volume alertmanager-data
+      community.docker.docker_volume:
+        name: alertmanager-data
+
+    - name: Create alertmanager_config_dir
+      ansible.builtin.file:
+        path: "{{ alertmanager_config_dir }}"
+        state: directory
+
+    - name: Copy Alertmanager config
+      ansible.builtin.template:
+        src: "templates/alertmanager.yml.j2"
+        dest: "{{ alertmanager_config_dir }}/alertmanager.yml"
+
+    # - name: set-up alertmanager config
+    #   include_tasks: update_alertmanager_rules.yml
+
+    - name: Start alertmanager
+      community.docker.docker_container:
+        name: "{{ alertmanager_container_name }}"
+        state: started
+        image: prom/alertmanager
+        pull: true
+
+        command: >
+          --config.file=/config/alertmanager.yml --web.listen-address=":{{ alertmanager_web_port }}"
+
+        volumes:
+          - "{{ alertmanager_config_dir }}:/config"
+          - alertmanager-data:/data
+
+        restart_policy: unless-stopped
+        ports:
+          - "{{ alertmanager_web_port }}:{{ alertmanager_web_port }}"
+        log_driver: json-file
+        log_options:
+          max-file: "10"
+          max-size: 30m
+          mode: non-blocking
+          max-buffer-size: 4m

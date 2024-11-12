@@ -10,7 +10,7 @@ groups:
         annotations:
           summary: Instance {{ $labels.instance }} down
           description: |
-            {{ $labels.instance }} of scraper {{ $labels.scrape_location }} has been down for +5 minutes.
+            {{ $labels.instance }} of scraper {{ $labels.scrape_location }} has been down for +3 minutes.
 
       # 1.1.10. Prometheus rule evaluation failures - https://awesome-prometheus-alerts.grep.to/rules#rule-prometheus-self-monitoring-1-10
       # Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.

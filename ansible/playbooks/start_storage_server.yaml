@@ -33,6 +33,7 @@
           MINIO_ROOT_PASSWORD: "{{ minio_root_password }}"
         command: server /data --console-address ":{{ minio_console_port }}"
         labels:
+          minio_log: "true"
           promtail_logging: "true"
           scrape_location: "minio"
           client_name: "minio-svc"
