@@ -36,6 +36,9 @@ start-storage-server: check-host-var
 start-query-server: check-host-var
 	ansible-playbook ./playbooks/start_query_server.yaml -l '$(HOSTS)'
 
+start-dbt-transform: check-host-var
+	ansible-playbook ./playbooks/start_dbt_transform.yaml -l '$(HOSTS)'
+
 
 # order command 
 order:
@@ -56,6 +59,7 @@ help:
 	@echo "  make start-airbyte-server HOSTS=<target_hosts>  [Start the Airbyte server]"
 	@echo "  make start-storage-server HOSTS=<target_hosts>  [Start the storage server]"
 	@echo "  make start-query-server HOSTS=<target_hosts>    [Start the query server]"
+	@echo "  make start-dbt-transform HOSTS=<target_hosts>   [Run & build DBT models]"
 	@echo
 	@echo "Usage example:"
 	@echo "  make bootstrap-server HOSTS=src-server-0"

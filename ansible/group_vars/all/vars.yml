@@ -174,4 +174,10 @@ slack_channel: "#platform-alerts"
 
 # DBT Trsnsform
 dbt_directory: "{{home_dir}}/dbt"
-dbt_src_dir: "../../dbt_transform"
+dbt_workdir: "dbt_transform"
+dbt_src_dir: "../../{{ dbt_workdir }}"
+dbt_transform_schema: dev
+dbt_transform_threads: 1
+dbt_image: ghcr.io/dbt-labs/dbt-postgres
+dbt_image_tag: 1.7.2
+dbt_port: 8080

@@ -10,8 +10,28 @@
         path: "{{ dbt_directory }}"
         state: directory
 
-    - name: Copy the entire folder
+    - name: Copy dbt project folder
       ansible.builtin.copy:
         src: "{{ dbt_src_dir }}"
         dest: "{{ dbt_directory }}"
         remote_src: no
+    
+    - name: create dbt profile from template
+      ansible.builtin.template:
+        src: templates/profiles.yml.j2
+        dest: "{{ dbt_directory }}/{{ dbt_workdir }}/profiles.yml"
+
+    - name: Run the DBT container
+      community.docker.docker_container:
+        name: dbt
+        image: "{{ dbt_image }}:{{ dbt_image_tag }}"
+        state: started
+        detach: true
+        ports:
+          - "{{ dbt_port }}:{{ dbt_port }}"
+        volumes:
+          - "{{ dbt_directory }}/{{ dbt_workdir }}:/usr/app/dbt"
+        env:
+          DBT_PROFILES_DIR: /usr/app/dbt
+          DBT_TARGET: dev
+        command: ["run"]

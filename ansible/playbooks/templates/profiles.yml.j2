@@ -1,0 +1,12 @@
+dbt_transform:
+  outputs:
+    dev:
+      dbname: {{ postgres_database }}
+      host: {{ hostvars['src-server-0'].ansible_host }}
+      pass: {{ postgres_password }}
+      port: {{ postgres_port }}
+      schema: {{ dbt_transform_schema }}
+      threads: {{ dbt_transform_threads }}
+      type: postgres
+      user: {{ postgres_user }}
+  target: dev
