@@ -1,0 +1,17 @@
+---
+- name: start DBT Transform
+  hosts: src-server-0
+  gather_facts: true
+  become: true
+  
+  tasks:
+    - name: create a dbt diectory
+      ansible.builtin.file:
+        path: "{{ dbt_directory }}"
+        state: directory
+
+    - name: Copy the entire folder
+      ansible.builtin.copy:
+        src: "{{ dbt_src_dir }}"
+        dest: "{{ dbt_directory }}"
+        remote_src: no

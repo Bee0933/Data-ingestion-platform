@@ -169,5 +169,9 @@ alert_manager_home_dir_default: /home/{{bootstrap_user}}
 alertmanager_config_dir: "{{ alert_manager_home_dir_default }}/alertmanager"
 alertmanager_config_file: "alertmanager.yml"
 alertmanager_rule_template: "alertmanager.yml"
-slack_wehbook: "https://hooks.slack.com/services/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"
-slack_channel: workflow-ochestration
+slack_wehbook: "https://hooks.slack.com/services/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"
+slack_channel: "#platform-alerts"
+
+# DBT Trsnsform
+dbt_directory: "{{home_dir}}/dbt"
+dbt_src_dir: "../../dbt_transform"

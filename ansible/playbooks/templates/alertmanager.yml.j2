@@ -17,12 +17,5 @@ receivers:
   - name: "slack-alerts"
     slack_configs:
       - api_url: '{{ slack_wehbook }}'
-        channel: '{{ slack_channel }}'  # Slack channel where you want to send alerts
+        channel: '{{ slack_channel }}'  
         send_resolved: true
-        text: |
-          {% raw %}
-          *Alert:* {{ .CommonLabels.alertname }}
-          *Severity:* {{ .CommonLabels.severity }}
-          *Description:* {{ .CommonAnnotations.description }}
-          *Details:* {{ .Annotations }}
-          {% endraw %}
