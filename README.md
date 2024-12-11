@@ -1,4 +1,3 @@
 # Data-ingestion-platform
 
-## todo:
-- transform with (airbyte trans of dbt) to postgres
+<img src="static/mod-platform-1.png" alt="ELT Architecture" width="600"/>
