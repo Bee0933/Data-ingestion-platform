@@ -36,6 +36,9 @@ start-storage-server: check-host-var
 start-query-server: check-host-var
 	ansible-playbook ./playbooks/start_query_server.yaml -l '$(HOSTS)'
 
+start-rev-proxy: check-host-var
+	ansible-playbook ./playbooks/start_reverse_proxy.yaml -l '$(HOSTS)'
+
 start-dbt-transform: check-host-var
 	ansible-playbook ./playbooks/start_dbt_transform.yaml -l '$(HOSTS)'
 

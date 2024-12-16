@@ -23,6 +23,11 @@
           promtail_logging: "true"
           scrape_location: "duckdb"
           client_name: "query-svc"
+          traefik.enable: "true"
+          traefik.http.routers.duckdb-http.entrypoints: "web"
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}"
+          
 
     - name: Reload Query Service
       ansible.builtin.command: docker restart {{ duckdb_svc_container_name }}

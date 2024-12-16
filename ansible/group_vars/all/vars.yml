@@ -10,6 +10,18 @@ upgrade_all_packages: false
 docker_users: "{{bootstrap_user}}"
 docker_daily_prune: true
 
+base_dir: /home/{{ bootstrap_user }}
+
+# traefik
+traefik_dir: "{{ base_dir }}/traefik"
+traefik_image: traefik:3.0.1
+traefik_server_docker_container_name: traefik-server
+traefik_server_docker_network: confluent 
+traefik_basic_auth_user: "dataops"
+traefik_basic_auth_password: "dataops"
+traefik_basic_auth_encrypt_password: "$2y$05$cMZrdRrLS2OaF7oCrvNqaOq3.WaKXwW2H24RIIlZkYR4LnwnfDyFK"
+
+
 ####### src-server ########
 sftp_user: dataops
 sftp_password: dataops

@@ -1,0 +1,51 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+accessLog: {}
+
+log:
+  level: DEBUG
+
+api:
+  dashboard: true
+  insecure: true
+  debug: false
+
+entryPoints:
+  web:
+    address: :80
+    http:
+      
+
+http:
+  routers:
+    duckdb-server-router:
+      rule: "Host(`{{ hostvars['duckdb-server-0'].ansible_host }}`)" 
+      entryPoints:
+        - web
+      middlewares:
+        - basic-auth
+      service: duckdb-server
+
+  middlewares:
+    basic-auth:
+      basicauth:
+        users:
+          - "{{ traefik_basic_auth_user }}:{{ traefik_basic_auth_encrypt_password }}"
+
+  services:
+    duckdb-server:
+      loadBalancer:
+        servers:
+          - url: http://duckdb-query-service:8007
+
+providers:
+  docker:
+    exposedByDefault: false
+    endpoint: 'unix:///var/run/docker.sock'
+    watch: true
+  file:
+    filename: /etc/traefik/traefik.yml
+    watch: true
+  
