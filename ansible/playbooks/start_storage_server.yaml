@@ -37,6 +37,10 @@
           promtail_logging: "true"
           scrape_location: "minio"
           client_name: "minio-svc"
+          traefik.enable: "true"
+          traefik.http.routers.minio-http.entrypoints: "web"
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}"
     
     - name: Wait for MinIO to start
       wait_for:

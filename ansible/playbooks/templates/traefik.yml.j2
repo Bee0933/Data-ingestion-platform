@@ -16,6 +16,10 @@ entryPoints:
   web:
     address: :80
     http:
+  minio-console:
+    address: :9001
+  minio-api:
+    address: :9000
       
 
 http:
@@ -28,6 +32,20 @@ http:
         - basic-auth
       service: duckdb-server
 
+    storage-console-server-router:
+      rule: "PathPrefix(`/`)" 
+      entryPoints:
+        - minio-console
+      middlewares:
+        - basic-auth
+      service: storage-console-server
+    
+    storage-api-server-router:
+      rule: "PathPrefix(`/`)" 
+      entryPoints:
+        - minio-api
+      service: storage-api-server
+
   middlewares:
     basic-auth:
       basicauth:
@@ -39,6 +57,18 @@ http:
       loadBalancer:
         servers:
           - url: http://duckdb-query-service:8007
+
+    storage-console-server:
+      loadBalancer:
+        servers:
+          - url: http://minio:9001
+        passHostHeader: true
+        
+
+    storage-api-server:
+      loadBalancer:
+        servers:
+          - url: http://minio:9000
 
 providers:
   docker:
