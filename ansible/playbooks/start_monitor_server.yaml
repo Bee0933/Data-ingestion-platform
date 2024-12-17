@@ -69,6 +69,11 @@
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
+        labels:
+          traefik.enable: "true"
+          traefik.http.routers.prometheus-http.entrypoints: "prometheus"
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}"
 
     # Loki
     - name: Create loki config dir
@@ -111,7 +116,12 @@
           mode: non-blocking
           max-buffer-size: 4m
         ports:
-          - "{{ loki_http_listen_port }}:{{ loki_http_listen_port }}"  
+          - "{{ loki_http_listen_port }}:{{ loki_http_listen_port }}"
+        labels:
+          traefik.enable: "true"
+          traefik.http.routers.loki-http.entrypoints: "loki"
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}"  
 
     
     # Grafana
@@ -184,6 +194,11 @@
           max-file: "5"
           mode: "non-blocking"
         privileged: true
+        labels:
+          traefik.enable: "true"
+          traefik.http.routers.grafana-http.entrypoints: "grafana"
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}"
     
     # Alert manager
     - name: Install deps
@@ -232,3 +247,8 @@
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
+        labels:
+          traefik.enable: "true"
+          traefik.http.routers.alertmanager-http.entrypoints: "alertmanager"
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}"

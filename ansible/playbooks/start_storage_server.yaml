@@ -38,7 +38,7 @@
           scrape_location: "minio"
           client_name: "minio-svc"
           traefik.enable: "true"
-          traefik.http.routers.minio-http.entrypoints: "web"
+          traefik.http.routers.minio-http.entrypoints: "minio-console,minio-api"
         networks:
           - name: "traefik_{{ traefik_server_docker_network }}"
     

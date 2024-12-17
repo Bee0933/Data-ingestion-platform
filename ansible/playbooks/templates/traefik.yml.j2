@@ -20,6 +20,14 @@ entryPoints:
     address: :9001
   minio-api:
     address: :9000
+  prometheus:
+    address: :9090
+  loki:
+    address: :3100
+  grafana:
+    address: :3000
+  alertmanager:
+    address: :9095
       
 
 http:
@@ -36,8 +44,6 @@ http:
       rule: "PathPrefix(`/`)" 
       entryPoints:
         - minio-console
-      middlewares:
-        - basic-auth
       service: storage-console-server
     
     storage-api-server-router:
@@ -45,6 +51,34 @@ http:
       entryPoints:
         - minio-api
       service: storage-api-server
+    
+    prometheus-server-router:
+      rule: "PathPrefix(`/`)" 
+      entryPoints:
+        - prometheus
+      middlewares:
+        - basic-auth
+      service: prometheus-server
+    
+    loki-server-router:
+      rule: "PathPrefix(`/`)" 
+      entryPoints:
+        - loki
+      middlewares:
+        - basic-auth
+      service: loki-server
+
+    grafana-server-router:
+      rule: "PathPrefix(`/`)" 
+      entryPoints:
+        - grafana
+      service: grafana-server
+
+    alertmanager-server-router:
+      rule: "PathPrefix(`/`)" 
+      entryPoints:
+        - alertmanager
+      service: alertmanager-server
 
   middlewares:
     basic-auth:
@@ -69,6 +103,31 @@ http:
       loadBalancer:
         servers:
           - url: http://minio:9000
+        passHostHeader: true
+    
+    prometheus-server:
+      loadBalancer:
+        servers:
+          - url: http://prometheus:9090
+        passHostHeader: true
+
+    loki-server:
+      loadBalancer:
+        servers:
+          - url: http://loki:3100
+        passHostHeader: true
+    
+    grafana-server:
+      loadBalancer:
+        servers:
+          - url: http://grafana:3000
+        passHostHeader: true
+
+    alertmanager-server:
+      loadBalancer:
+        servers:
+          - url: http://alertmanager:9095
+        passHostHeader: true
 
 providers:
   docker:
