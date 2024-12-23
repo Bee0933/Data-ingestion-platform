@@ -27,8 +27,12 @@
           - "{{ node_exporter_local_port }}:{{ node_exporter_local_port }}"  # Exposes the specified port
         volumes: "{{ node_exporter_container_volumes }}"
         env: "{{ node_exporter_container_env }}"
-        networks: "{{ node_exporter_container_networks }}"
         command: "{{ node_exporter_container_command }}"
+        labels:
+          traefik.enable: "true"
+          traefik.http.routers.loki-http.entrypoints: "loki"
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}" 
 
     # start promptail
     - name: Start Promtail
@@ -55,3 +59,5 @@
           max-size: 30m
           mode: non-blocking
           max-buffer-size: 4m
+        networks:
+          - name: "traefik_{{ traefik_server_docker_network }}"

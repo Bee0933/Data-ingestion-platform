@@ -21,13 +21,15 @@ entryPoints:
   minio-api:
     address: :9000
   prometheus:
-    address: :9090
+    address: :9092
   loki:
     address: :3100
   grafana:
     address: :3000
   alertmanager:
     address: :9095
+  node-exporter:
+    address: :9100
       
 
 http:
@@ -53,7 +55,7 @@ http:
       service: storage-api-server
     
     prometheus-server-router:
-      rule: "PathPrefix(`/`)" 
+      rule: "Host(`{{ hostvars['storage-server-0'].ansible_host }}`)"
       entryPoints:
         - prometheus
       middlewares:
@@ -79,6 +81,12 @@ http:
       entryPoints:
         - alertmanager
       service: alertmanager-server
+
+    node-exporter-server-router:
+      rule: "PathPrefix(`/`)" 
+      entryPoints:
+        - node-exporter
+      service: node-exporter-server
 
   middlewares:
     basic-auth:
@@ -127,6 +135,12 @@ http:
       loadBalancer:
         servers:
           - url: http://alertmanager:9095
+        passHostHeader: true
+    
+    node-exporter-server:
+      loadBalancer:
+        servers:
+          - url: http://node-exporter:9100
         passHostHeader: true
 
 providers:

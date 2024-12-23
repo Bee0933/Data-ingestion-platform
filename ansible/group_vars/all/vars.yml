@@ -20,6 +20,7 @@ traefik_server_docker_network: confluent
 traefik_basic_auth_user: "dataops"
 traefik_basic_auth_password: "dataops"
 traefik_basic_auth_encrypt_password: "$2y$05$cMZrdRrLS2OaF7oCrvNqaOq3.WaKXwW2H24RIIlZkYR4LnwnfDyFK"
+traefik_prometheus_public_port: 9092
 
 
 ####### src-server ########
@@ -101,7 +102,8 @@ duckdb_svc_container_port: "8007"
 
 
 ####### Monitor ########
-node_exporter_container_name: node_exporter
+# node exporter
+node_exporter_container_name: node-exporter
 node_exporter_container_image: prom/node-exporter:v1.5.0 
 node_exporter_container_env: {}
 node_exporter_local_port: 9100
