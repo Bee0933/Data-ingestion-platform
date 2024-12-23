@@ -16,132 +16,255 @@ entryPoints:
   web:
     address: :80
     http:
-  minio-console:
-    address: :9001
-  minio-api:
-    address: :9000
-  prometheus:
-    address: :9092
-  loki:
-    address: :3100
-  grafana:
-    address: :3000
-  alertmanager:
-    address: :9095
-  node-exporter:
-    address: :9100
-      
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: :443
 
+certificatesResolvers:
+  letsencrypt:
+    # https://docs.traefik.io/master/https/acme/#lets-encrypt
+    acme:
+      email: "{{ traefik_monitor_mail }}" 
+      storage: /etc/traefik/acme/acme.json
+      # https://docs.traefik.io/master/https/acme/#httpchallenge
+      httpChallenge:
+        entryPoint: web
+      
 http:
   routers:
-    duckdb-server-router:
-      rule: "Host(`{{ hostvars['duckdb-server-0'].ansible_host }}`)" 
+    sftp-svc-router:
+      rule: "Host(`sftp.{{ traefik_platform_host }}`)" 
       entryPoints:
         - web
       middlewares:
-        - basic-auth
-      service: duckdb-server
-
-    storage-console-server-router:
-      rule: "PathPrefix(`/`)" 
-      entryPoints:
-        - minio-console
-      service: storage-console-server
+        - csrf
+      service: sftp-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
     
-    storage-api-server-router:
-      rule: "PathPrefix(`/`)" 
+    postgres-svc-router:
+      rule: "Host(`postgres.{{ traefik_platform_host }}`)" 
       entryPoints:
-        - minio-api
-      service: storage-api-server
-    
-    prometheus-server-router:
-      rule: "Host(`{{ hostvars['storage-server-0'].ansible_host }}`)"
-      entryPoints:
-        - prometheus
+        - websecure
       middlewares:
-        - basic-auth
-      service: prometheus-server
+        - csrf
+      service: postgres-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
     
-    loki-server-router:
-      rule: "PathPrefix(`/`)" 
+    airbyte-svc-router:
+      rule: "Host(`airbyte.{{ traefik_platform_host }}`)" 
       entryPoints:
-        - loki
+        - websecure
       middlewares:
+        - csrf
+      service: airbyte-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+
+    storage-svc-router-console:
+      rule: "Host(`storage.{{ traefik_platform_host }}`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
+      service: storage-console-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    storage-svc-router-api:
+      rule: "Host(`storage.{{ traefik_platform_host }}`) && Path(`/api`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
+      service: storage-api-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    query-svc-router:
+      rule: "Host(`query.{{ traefik_platform_host }}`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
         - basic-auth
-      service: loki-server
-
-    grafana-server-router:
-      rule: "PathPrefix(`/`)" 
+      service: query-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    prometheus-router:
+      rule: "Host(`prometheus.{{ traefik_platform_host }}`)" 
       entryPoints:
-        - grafana
-      service: grafana-server
-
-    alertmanager-server-router:
-      rule: "PathPrefix(`/`)" 
+        - websecure
+      middlewares:
+        - csrf
+        - basic-auth
+      service: prometheus-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    loki-router:
+      rule: "Host(`loki.{{ traefik_platform_host }}`)" 
       entryPoints:
-        - alertmanager
-      service: alertmanager-server
-
-    node-exporter-server-router:
-      rule: "PathPrefix(`/`)" 
+        - websecure
+      middlewares:
+        - csrf
+        - basic-auth
+      service: loki-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    alertmanager-router:
+      rule: "Host(`alertmanager.{{ traefik_platform_host }}`)" 
       entryPoints:
-        - node-exporter
-      service: node-exporter-server
+        - websecure
+      middlewares:
+        - csrf
+        - basic-auth
+      service: alertmanager-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    grafana-router:
+      rule: "Host(`grafana.{{ traefik_platform_host }}`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
+      service: grafana-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    exporter0-router:
+      rule: "Host(`exporter0.{{ traefik_platform_host }}`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
+        - basic-auth
+      service: exporter-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+    
+    exporter1-router:
+      rule: "Host(`exporter1.{{ traefik_platform_host }}`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
+        - basic-auth
+      service: exporter-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
 
+    exporter2-router:
+      rule: "Host(`exporter2.{{ traefik_platform_host }}`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
+        - basic-auth
+      service: exporter-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+
+    exporter3-router:
+      rule: "Host(`exporter3.{{ traefik_platform_host }}`)" 
+      entryPoints:
+        - websecure
+      middlewares:
+        - csrf
+        - basic-auth
+      service: exporter-svc
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+
+    
   middlewares:
+    csrf:
+      # https://docs.traefik.io/master/middlewares/headers/#hostsproxyheaders
+      # https://docs.djangoproject.com/en/dev/ref/csrf/#ajax
+      headers:
+        hostsProxyHeaders: ["X-CSRFToken"]
+    
     basic-auth:
       basicauth:
         users:
           - "{{ traefik_basic_auth_user }}:{{ traefik_basic_auth_encrypt_password }}"
 
   services:
-    duckdb-server:
+    sftp-svc:
       loadBalancer:
         servers:
-          - url: http://duckdb-query-service:8007
-
-    storage-console-server:
-      loadBalancer:
-        servers:
-          - url: http://minio:9001
-        passHostHeader: true
-        
-
-    storage-api-server:
-      loadBalancer:
-        servers:
-          - url: http://minio:9000
-        passHostHeader: true
+          - url: http://sftp:"{{ sftp_port }}"
     
-    prometheus-server:
+    postgres-svc:
       loadBalancer:
         servers:
-          - url: http://prometheus:9090
-        passHostHeader: true
+          - url: http://postgres:"{{ postgres_port }}"
 
-    loki-server:
+    airbyte-svc:
       loadBalancer:
         servers:
-          - url: http://loki:3100
-        passHostHeader: true
-    
-    grafana-server:
-      loadBalancer:
-        servers:
-          - url: http://grafana:3000
-        passHostHeader: true
+          - url: http://airbyte:"{{ airbyte_port }}"
 
-    alertmanager-server:
+    storage-console-svc:
       loadBalancer:
         servers:
-          - url: http://alertmanager:9095
-        passHostHeader: true
+          - url: http://minio:"{{ minio_console_port }}"
     
-    node-exporter-server:
+    storage-api-svc:
       loadBalancer:
         servers:
-          - url: http://node-exporter:9100
-        passHostHeader: true
+          - url: http://minio:"{{ minio_api_port }}"
+
+    query-svc:
+      loadBalancer:
+        servers:
+          - url: http://minio:"{{ duckdb_svc_container_port }}"
+
+    prometheus-svc:
+      loadBalancer:
+        servers:
+          - url: http://prometheus:"{{ prometheus_web_port }}"
+    
+    loki-svc:
+      loadBalancer:
+        servers:
+          - url: http://loki:"{{ loki_http_listen_port }}"
+
+    alertmanager-svc:
+      loadBalancer:
+        servers:
+          - url: http://loki:"{{ alertmanager_web_port }}"
+
+    grafana-svc:
+      loadBalancer:
+        servers:
+          - url: http://grafana:"{{ grafana_port }}"
+    
+    exporter-svc:
+      loadBalancer:
+        servers:
+          - url: http://node-exporter:"{{ node_exporter_local_port }}"
 
 providers:
   docker:

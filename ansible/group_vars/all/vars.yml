@@ -20,7 +20,7 @@ traefik_server_docker_network: confluent
 traefik_basic_auth_user: "dataops"
 traefik_basic_auth_password: "dataops"
 traefik_basic_auth_encrypt_password: "$2y$05$cMZrdRrLS2OaF7oCrvNqaOq3.WaKXwW2H24RIIlZkYR4LnwnfDyFK"
-traefik_prometheus_public_port: 9092
+traefik_platform_host: bestnyah.xyz
 
 
 ####### src-server ########
