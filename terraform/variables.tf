@@ -16,8 +16,3 @@ variable "project-tag" {
   description = "Unique project Tag"
 }
 
-variable "domain_name" {
-  type        = string
-  default     = "bestnyah.xyz"
-  description = "domain name for platfrom"
-}
