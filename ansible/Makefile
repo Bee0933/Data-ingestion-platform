@@ -45,7 +45,7 @@ start-dbt-transform: check-host-var
 
 # order command 
 order:
-	@echo "bootstrap-server  --> start-rev-proxy --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server --> start-monitor-server --> start-metrics"
+	@echo "bootstrap-server --> start-src-server --> start-storage-server --> start-airbyte-server --> start-query-server --> start-monitor-server --> start-metrics"
 	
 
 # Help command

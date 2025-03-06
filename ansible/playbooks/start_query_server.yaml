@@ -16,17 +16,13 @@
           MINIO_SECRET_KEY: "{{ minio_root_password }}"
           MINIO_ENDPOINT_URL: "http://{{ hostvars['storage-server-0'].ansible_host }}:{{ minio_api_port }}"
           MINIO_BUCKET_NAME: "{{ minio_bucket_name }}"
-          DUCKDB_SERVER_PORT: "{{ duckdb_svc_container_port }}"  
+          DUCKDB_SERVER_PORT: "{{ duckdb_svc_container_port | string  }}"  
         published_ports:
           - "{{ duckdb_svc_container_port }}:{{ duckdb_svc_container_port }}"
         labels:
           promtail_logging: "true"
           scrape_location: "duckdb"
           client_name: "query-svc"
-          traefik.enable: "true"
-          traefik.http.routers.duckdb-http.entrypoints: "web"
-        networks:
-          - name: "traefik_{{ traefik_server_docker_network }}"
           
 
     - name: Reload Query Service

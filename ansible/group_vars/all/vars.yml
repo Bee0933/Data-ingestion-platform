@@ -99,7 +99,7 @@ minio_bucket_region: us-east-1
 duckdb_svc_container_name: duckdb-query-service
 duckdb_svc_image: bestnyah/duckdb-query-service
 duckdb_svc_image_tag: latest
-duckdb_svc_container_port: 8007
+duckdb_svc_container_port: "8007"
 
 
 ####### Monitor ########
